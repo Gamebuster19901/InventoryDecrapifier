@@ -1,0 +1,16 @@
+[
+{
+  "modid": "invdecrap",
+  "name": "\u00a7c\u00a7lInventory Decrapifier\u00a7r",
+  "description": "Making sure crap stays out of your inventory",
+  "version": "0.11.1.17-1.12.2",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Gamebuster19901"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
