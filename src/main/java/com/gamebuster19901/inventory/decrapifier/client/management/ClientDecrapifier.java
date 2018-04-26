@@ -2,6 +2,7 @@ package com.gamebuster19901.inventory.decrapifier.client.management;
 
 
 import com.gamebuster19901.inventory.decrapifier.Main;
+import com.gamebuster19901.inventory.decrapifier.client.gui.GUIConfig;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler;
 import com.gamebuster19901.inventory.decrapifier.common.CommonDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.common.PlayerPickupQueue;
@@ -21,6 +22,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.renderer.Vector3d;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -38,7 +40,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -132,6 +136,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	}
 	
 	private final void processBinding(int index, boolean state, boolean justPressed) {
+		EntityPlayer p = Minecraft.getMinecraft().player;
 		switch(index) {
 			case 0:
 				if(justPressed) {
@@ -140,7 +145,6 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 				break;
 			case 1:
 				if(justPressed) {
-					EntityPlayer p = Minecraft.getMinecraft().player;
 					p.openGui(Main.getInstance(), GUIHandler.GUI_BLACKLIST, p.world, (int)p.posX, (int)p.posY, (int)p.posZ);
 				}
 				break;
@@ -149,6 +153,15 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 					dropBlacklistedItems();
 				}
 				break;
+			case 4:
+				if(justPressed) {
+					boolean newBlacklistState = !blacklistEnabled();
+					String message = "§e[" + Main.MODNAME + "]:§r " + I18n.format("invdecrap.message.blacklist");
+					message = newBlacklistState ? message + " §a§l" + I18n.format("addServer.resourcePack.enabled") : message + " §c§l" + I18n.format("addServer.resourcePack.disabled");
+					GUIConfig.blacklistEnabled.set(newBlacklistState);
+					GUIConfig.CONFIG.save();
+					p.sendMessage(new TextComponentString(message));
+				}
 			default:
 				return;
 		}
@@ -260,17 +273,17 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	
 	public static final boolean blacklistEnabled(){
 		//debug("blacklist is " + ClientProxy.getConfig().get("Main", "isBlackListOn", false, "If true, you will not pickup anything in the blacklist, unless you press the 'Pick up Item' key").getBoolean());
-		return ClientProxy.getConfig().get("Main", "isBlackListOn", false, "If true, you will not pickup anything in the blacklist, unless you press the 'Pick up Item' key").getBoolean();
+		return GUIConfig.blacklistEnabled.getBoolean();
 	}
 	
 	public static final boolean highlightEnabled(){
 		//debug("Highlight is " + ClientProxy.getConfig().get("Main", "highlightSelectedItem", true, "If true, the item you are selecting for pickup will glow").getBoolean());
-		return ClientProxy.getConfig().get("Main", "highlightSelectedItem", true, "If true, the item you are selecting for pickup will glow").getBoolean();
+		return GUIConfig.highlightEnabled.getBoolean();
 	}
 	
 	public static final boolean pickupItemsByDefault(){
 		//debug("CanPickup is " + ClientProxy.getConfig().get("Main", "pickupItemsByDefault", true, "If false, you will not pick up ANYTHING unless you press the 'Pick up Item' key while looking at the item you want").getBoolean());
-		return ClientProxy.getConfig().get("Main", "pickupItemsByDefault", true, "If false, you will not pick up ANYTHING unless you press the 'Pick up Item' key while looking at the item you want").getBoolean();
+		return GUIConfig.pickupByDefault.getBoolean();
 	}
 	
 	public static final NetHandlerPlayClient getConnection(){

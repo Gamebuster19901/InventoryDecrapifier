@@ -13,6 +13,7 @@ import com.gamebuster19901.inventory.decrapifier.client.events.listeners.ClientS
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIAddToBlacklist;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.*;
+import com.gamebuster19901.inventory.decrapifier.client.gui.GUIConfig;
 import com.gamebuster19901.inventory.decrapifier.client.management.Blacklist;
 import com.gamebuster19901.inventory.decrapifier.client.management.ClientDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
@@ -40,16 +41,14 @@ public class ClientProxy extends Proxy{
 		new KeyBinding("key." + MODID + ".pickup.description", Keyboard.KEY_C, "key." + MODID + ".category"),
 		new KeyBinding("key." + MODID + ".openblacklistgui.description", Keyboard.KEY_X, "key." + MODID + ".category"),
 		new KeyBinding("key." + MODID + ".decrapify.description", Keyboard.KEY_B, "key." + MODID + ".category"),
-		new KeyBinding("key." + MODID + ".quicktoss.description", Keyboard.KEY_V, "key." + MODID + ".category"),
-		new KeyBinding("key." + MODID + ".quickblacklist.description", Keyboard.KEY_N, "key." + MODID + ".category")
+		new KeyBinding("key." + MODID + ".quickblacklist.description", Keyboard.KEY_V, "key." + MODID + ".category"),
+		new KeyBinding("key." + MODID + ".toggleblacklist.description", Keyboard.KEY_N, "key." + MODID + ".category")
 	};
 	
 	static {
-		KEYBINDINGS[0].setKeyConflictContext(KeyConflictContext.IN_GAME);
-		KEYBINDINGS[1].setKeyConflictContext(KeyConflictContext.IN_GAME);
-		KEYBINDINGS[2].setKeyConflictContext(KeyConflictContext.IN_GAME);
-		KEYBINDINGS[3].setKeyConflictContext(KeyConflictContext.IN_GAME);
-		KEYBINDINGS[4].setKeyConflictContext(KeyConflictContext.IN_GAME);
+		for(KeyBinding k : KEYBINDINGS) {
+			k.setKeyConflictContext(KeyConflictContext.IN_GAME);
+		}
 		Minecraft.getMinecraft().gameSettings.keyBindLoadToolbar.setKeyConflictContext(KeyConflictContext.GUI);
 		Minecraft.getMinecraft().gameSettings.keyBindSaveToolbar.setKeyConflictContext(KeyConflictContext.GUI);
 	}
@@ -111,8 +110,8 @@ public class ClientProxy extends Proxy{
 	private final void syncToGUI(){
 		ArrayList<String> FailedIDs = new ArrayList<String>();
 		ArrayList<String> FailedOre = new ArrayList<String>();
-		String[] blackListID = getConfig().get("Main", "blackListedItemsByID", new String[]{"NULL"}, "A list of items (by ID) that you will not automatically pick up.\nThis only takes effect if the blacklist is on.").getStringList();
-		String[] blackListOreDictionary = getConfig().get("Main", "blackListedItemsByOreDictionary", new String[]{"NULL"}, "A list of Ore Dictionary names. If an item corresponds with the Ore Dictionary name, you will not pick up the item. \n Only takes effect if the blacklist is on").getStringList();
+		String[] blackListID = GUIConfig.blacklistIds.getStringList();
+		String[] blackListOreDictionary = GUIConfig.blacklistOres.getStringList();
 		ClientDecrapifier decrap = (ClientDecrapifier) getDecrapifier();
 		Blacklist blacklist = Blacklist.INSTANCE;
 		blacklist.clearBannedItems();
@@ -159,8 +158,8 @@ public class ClientProxy extends Proxy{
 				blackListID.add(l.toString());
 			}
 		}
-		getConfig().getCategory("main").get("blackListedItemsByID").setValues(blackListID.toArray(new String[]{}));
-		getConfig().getCategory("main").get("blackListedItemsByOreDictionary").setValues(blackListOres.toArray(new String[]{}));
+		GUIConfig.blacklistIds.setValues(blackListID.toArray(new String[]{}));
+		GUIConfig.blacklistOres.setValues(blackListOres.toArray(new String[]{}));
 		new ConfigChangedEvent(MODID, CONFIG.getConfigFile().getName(), true, false);
 		getConfig().save();
 	}
@@ -194,12 +193,7 @@ public class ClientProxy extends Proxy{
 	}
 	
 	private final static void config(){
-		CONFIG.get("Main", "pickupItemsByDefault", true, "If false, you will not pick up ANYTHING unless you press the 'Pick up Item' key while looking at the item you want");
-		CONFIG.get("Main", "isBlackListOn", false, "If true, you will not pickup anything in the blacklist, unless you press the 'Pick up Item' key");
-		CONFIG.get("Main", "highlightSelectedItem", true, "If true, the item you are selecting for pickup will glow");
-		CONFIG.get("Main", "blackListedItemsByID", new String[]{"NULL"}, "A list of items (by ID) that you will not automatically pick up.\nThis only takes effect if the blacklist is on.");
-		CONFIG.get("Main", "blackListedItemsByOreDictionary", new String[]{"NULL"}, "A list of Ore Dictionary names. If an item corresponds with the Ore Dictionary name, you will not pick up the item. Only takes effect if the blacklist is on ");
-		CONFIG.get("NonModServer", "tossBlackListedItemsOnPickup", true, "If the blacklist is on and this is true, then you will toss blacklisted items on pickup if you're not on a server with this mod installed " + TextFormatting.RED + " [NOT YET IMPLEMENTED]");
+		GUIConfig.initConfigValues();
 		CONFIG.save();
 	}
 	

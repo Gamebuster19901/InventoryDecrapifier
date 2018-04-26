@@ -6,12 +6,14 @@ config.invdecrap.category.NOS.tooltip=Settings for when the server doesn't have 
 key.invdecrap.category=Inventory Decrapifier
 
 key.invdecrap.pickup.description=Pick Up Item
-key.invdecrap.quicktoss.description=Quick Toss [NOT YET IMPLEMENTED]
 key.invdecrap.decrapify.description=Decrapify Inventory
 key.invdecrap.quickblacklist.description=Quick Blacklist [NOT YET IMPLEMENTED]
+key.invdecrap.toggleblacklist.description=Toggle Blacklist
 key.invdecrap.openblacklistgui.description=Open Blacklist GUI
 
 blacklist.category.id=ID Blacklist
 blacklist.category.ore=OreDictionary Blacklist
 blacklist.deletewarning.top=DELETE MODE ACTIVATED
 blacklist.deletewarning.bottom=ANYTHING YOU CLICK WILL BE DELETED
+
+invdecrap.message.blacklist=Blacklist
