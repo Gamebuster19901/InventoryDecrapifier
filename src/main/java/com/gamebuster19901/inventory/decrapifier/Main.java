@@ -1,5 +1,6 @@
 package com.gamebuster19901.inventory.decrapifier;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.fml.common.FMLLog;
@@ -16,7 +17,7 @@ public class Main{
 	public static final String MODID = "invdecrap";
 	public static final String MODNAME = "Inventory Decrapifier";
 	public static final String VERSION = "0.11.1.17 - 1.12.2";
-	public static final Logger LOGGER = FMLLog.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger(MODNAME);
 	private static Main instance;
 	@SidedProxy(serverSide = "com.gamebuster19901.inventory.decrapifier.proxy.ServerProxy", clientSide = "com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy")
 	public static com.gamebuster19901.inventory.decrapifier.proxy.Proxy Proxy;
