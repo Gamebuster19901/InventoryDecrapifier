@@ -108,6 +108,10 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 				return;
 			}
 		}
+		else {
+			setGlowing(target, false);
+			target = null;
+		}
 	}
 	
 	private final void setGlowing(EntityItem e, boolean state){
