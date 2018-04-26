@@ -183,6 +183,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		else if(pickupItemsByDefault() && blacklistEnabled() && !Blacklist.INSTANCE.contains(query.getItem())){
 			shouldPickup = true;
 		}
+		pickupTarget = false;
 		return new ClientResponsePacket(query, shouldPickup);
 	}
 	
