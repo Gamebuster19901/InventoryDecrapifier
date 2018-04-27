@@ -11,6 +11,7 @@ import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -61,7 +62,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 				if (newTarget != null){
 					Blacklist.INSTANCE.contains(newTarget.getItem());
 				}
-				if(ClientProxy.getKeyBindings()[2].isKeyDown()){
+				if(Minecraft.getMinecraft().gameSettings.isKeyDown(ClientProxy.getKeyBindings()[2])){
 					dropBlacklistedItems();
 				}
 			}
@@ -190,6 +191,9 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	}*/
 	
 	public void dropBlacklistedItems(){
+		if (Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatOpen()) {
+			return;
+		}
 		EntityPlayerSP p = Minecraft.getMinecraft().player;
 		if (p == null) {return;}
 		if(p.openContainer == null){
