@@ -1,45 +1,23 @@
 package com.gamebuster19901.inventory.decrapifier.client.gui;
 
-import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Bottom;
-import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Top;
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler.GUI_BLACKLIST;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.UUID;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.gamebuster19901.inventory.decrapifier.Main;
-import com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment;
 import com.gamebuster19901.inventory.decrapifier.client.management.Blacklist;
-import com.gamebuster19901.inventory.decrapifier.client.management.ClientDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
-import com.mojang.authlib.GameProfile;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiContainerCreative;
-import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.oredict.OreDictionary;
 

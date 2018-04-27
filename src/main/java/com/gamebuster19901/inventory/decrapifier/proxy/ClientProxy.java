@@ -8,11 +8,9 @@ import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
-import com.gamebuster19901.inventory.decrapifier.Main;
 import com.gamebuster19901.inventory.decrapifier.client.events.listeners.ClientServerListener;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIAddToBlacklist;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist;
-import com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.*;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIConfig;
 import com.gamebuster19901.inventory.decrapifier.client.management.Blacklist;
 import com.gamebuster19901.inventory.decrapifier.client.management.ClientDecrapifier;
@@ -21,13 +19,10 @@ import com.gamebuster19901.inventory.decrapifier.server.ServerDecrapifier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -48,6 +43,10 @@ public class ClientProxy extends Proxy{
 	static {
 		for(KeyBinding k : KEYBINDINGS) {
 			k.setKeyConflictContext(KeyConflictContext.IN_GAME);
+		}
+		KEYBINDINGS[2].setKeyConflictContext(KeyConflictContext.UNIVERSAL);
+		for(KeyBinding k : KEYBINDINGS) {
+			ClientRegistry.registerKeyBinding(k);
 		}
 		Minecraft.getMinecraft().gameSettings.keyBindLoadToolbar.setKeyConflictContext(KeyConflictContext.GUI);
 		Minecraft.getMinecraft().gameSettings.keyBindSaveToolbar.setKeyConflictContext(KeyConflictContext.GUI);

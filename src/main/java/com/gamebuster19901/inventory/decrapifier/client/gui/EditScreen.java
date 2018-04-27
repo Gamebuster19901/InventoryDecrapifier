@@ -6,7 +6,6 @@ import static net.minecraft.util.EnumFacing.WEST;
 
 import org.lwjgl.opengl.GL11;
 
-import com.gamebuster19901.inventory.decrapifier.client.gui.EditScreen.ImageButton;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment;
 
 import net.minecraft.client.Minecraft;

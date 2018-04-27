@@ -1,6 +1,5 @@
 package com.gamebuster19901.inventory.decrapifier.server;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import org.apache.logging.log4j.Level;
@@ -11,9 +10,6 @@ import com.gamebuster19901.inventory.decrapifier.common.PlayerPickupQueue;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerAskPickupItemPacket;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerHasModPacket;
 
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,7 +19,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ServerConnectionFromClientEvent;
 
 public class ServerDecrapifier extends CommonDecrapifier{
 	public static final LinkedHashSet<ConnectedClient> clients = new LinkedHashSet<ConnectedClient>();

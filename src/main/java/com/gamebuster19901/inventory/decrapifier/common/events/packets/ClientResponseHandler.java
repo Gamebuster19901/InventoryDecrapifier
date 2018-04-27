@@ -3,8 +3,6 @@ package com.gamebuster19901.inventory.decrapifier.common.events.packets;
 import java.util.ArrayList;
 
 import com.gamebuster19901.inventory.decrapifier.Main;
-import com.gamebuster19901.inventory.decrapifier.server.ServerDecrapifier;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.text.TextComponentString;

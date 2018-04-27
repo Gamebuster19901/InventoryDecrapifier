@@ -1,8 +1,6 @@
 package com.gamebuster19901.inventory.decrapifier.client.events.listeners;
 
 
-import static net.minecraftforge.fml.relauncher.Side.CLIENT;
-
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerHasModHandler;
 import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
 

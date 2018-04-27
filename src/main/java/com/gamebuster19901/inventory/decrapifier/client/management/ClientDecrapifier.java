@@ -5,23 +5,15 @@ import com.gamebuster19901.inventory.decrapifier.Main;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIConfig;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler;
 import com.gamebuster19901.inventory.decrapifier.common.CommonDecrapifier;
-import com.gamebuster19901.inventory.decrapifier.common.PlayerPickupQueue;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ClientResponsePacket;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerAskPickupItemPacket;
-import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerHasModHandler;
 import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
-
-import io.netty.util.internal.MathUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
@@ -32,25 +24,10 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketChatMessage;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 
@@ -69,10 +46,11 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	double maxDistance = 0;
 	
 	private long TimeLastDeathMessage = 0;
+	
 	@SubscribeEvent
 	public final void onPlayerTick(TickEvent.PlayerTickEvent e) throws IllegalArgumentException, IllegalAccessException{
-		if(e.player.world.isRemote){
-			if(e.phase == TickEvent.Phase.START){
+		if(e.phase == TickEvent.Phase.START){
+			if(e.player.world.isRemote){
 				EntityItem newTarget = getEntityItemPlayerIsLookingAt(e.player, 5);
 				if(newTarget != null && e.player.getDistance(newTarget.posX, newTarget.posY, newTarget.posZ) <= 1.4d){
 					setGlowingItem(newTarget);
@@ -82,6 +60,9 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 				}
 				if (newTarget != null){
 					Blacklist.INSTANCE.contains(newTarget.getItem());
+				}
+				if(ClientProxy.getKeyBindings()[2].isKeyDown()){
+					dropBlacklistedItems();
 				}
 			}
 		}

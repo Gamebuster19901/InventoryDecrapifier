@@ -2,11 +2,8 @@ package com.gamebuster19901.inventory.decrapifier.client.gui.components;
 
 import java.util.ArrayList;
 
-import com.gamebuster19901.inventory.decrapifier.client.gui.EditScreen;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
-import scala.actors.threadpool.Arrays;
 
 public class Overlay extends ArrayList<Overlay.Image>{
 	private GuiScreen parent;

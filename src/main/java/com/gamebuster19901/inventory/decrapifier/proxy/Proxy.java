@@ -4,7 +4,6 @@ import static com.gamebuster19901.inventory.decrapifier.Main.MODID;
 
 import com.gamebuster19901.inventory.decrapifier.Main;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler;
-import com.gamebuster19901.inventory.decrapifier.client.management.ClientDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.common.CommonDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ClientHasModHandler;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ClientHasModPacket;

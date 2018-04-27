@@ -1,11 +1,6 @@
 package com.gamebuster19901.inventory.decrapifier.client.management;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class Blacklist {
 	public static final Blacklist INSTANCE = new Blacklist();

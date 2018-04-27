@@ -10,9 +10,7 @@ import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Bottom;
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Sidebar;
 
-import static net.minecraft.util.EnumFacing.NORTH; //up
 import static net.minecraft.util.EnumFacing.EAST; //right
-import static net.minecraft.util.EnumFacing.SOUTH;//down
 import static net.minecraft.util.EnumFacing.WEST; //left
 
 import java.util.ArrayList;
@@ -23,7 +21,6 @@ import org.lwjgl.opengl.GL11;
 import com.gamebuster19901.inventory.decrapifier.Main;
 import com.gamebuster19901.inventory.decrapifier.client.gui.components.Overlay;
 import com.gamebuster19901.inventory.decrapifier.client.management.Blacklist;
-import com.gamebuster19901.inventory.decrapifier.client.management.ClientDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
 
 import net.minecraft.client.Minecraft;

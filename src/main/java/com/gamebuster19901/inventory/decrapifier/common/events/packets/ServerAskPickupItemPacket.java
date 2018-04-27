@@ -3,15 +3,9 @@ package com.gamebuster19901.inventory.decrapifier.common.events.packets;
 import java.util.UUID;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.server.FMLServerHandler;
 
 public class ServerAskPickupItemPacket implements IMessage{
 	private UUID UUID;
