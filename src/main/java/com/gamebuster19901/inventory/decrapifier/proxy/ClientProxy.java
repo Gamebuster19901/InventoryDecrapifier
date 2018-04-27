@@ -45,9 +45,6 @@ public class ClientProxy extends Proxy{
 			k.setKeyConflictContext(KeyConflictContext.IN_GAME);
 		}
 		KEYBINDINGS[2].setKeyConflictContext(KeyConflictContext.UNIVERSAL);
-		for(KeyBinding k : KEYBINDINGS) {
-			ClientRegistry.registerKeyBinding(k);
-		}
 		Minecraft.getMinecraft().gameSettings.keyBindLoadToolbar.setKeyConflictContext(KeyConflictContext.GUI);
 		Minecraft.getMinecraft().gameSettings.keyBindSaveToolbar.setKeyConflictContext(KeyConflictContext.GUI);
 	}
