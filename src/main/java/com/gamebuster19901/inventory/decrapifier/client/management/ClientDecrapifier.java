@@ -12,6 +12,8 @@ import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -204,14 +206,20 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 			}
 		}
 		else{
-			int windowID = p.openContainer.windowId;
-			for(Slot s : p.openContainer.inventorySlots){
-				if(Blacklist.INSTANCE.contains(s.getStack())){
-					dropItem(windowID, s.slotNumber);
+			if(controlPressed()) {
+				int windowID = p.openContainer.windowId;
+				for(Slot s : p.openContainer.inventorySlots){
+					if(Blacklist.INSTANCE.contains(s.getStack())){
+						dropItem(windowID, s.slotNumber);
+					}
 				}
 			}
 		}
-	}	
+	}
+	
+	private boolean controlPressed() {
+		return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+	}
 	
 	public void dropItem(int windowID, int slot){
 		Minecraft.getMinecraft().playerController.windowClick(windowID, slot, 1, ClickType.THROW, Minecraft.getMinecraft().player);
