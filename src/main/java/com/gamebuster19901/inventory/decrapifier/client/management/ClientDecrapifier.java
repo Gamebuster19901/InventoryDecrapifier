@@ -155,10 +155,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	
 	public final ClientResponsePacket canPickup(ServerAskPickupItemPacket query) {
 		boolean shouldPickup = false;
-		if(target == null) {
-			pickupTarget = false;
-		}
-		else if(target != null && query.getUUID().equals(target.getUniqueID()) && pickupTarget) {
+		if(target != null && query.getUUID().equals(target.getUniqueID()) && pickupTarget) {
 			shouldPickup = true;
 			pickupTarget = false;
 		}
@@ -167,6 +164,9 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		}
 		else if(pickupItemsByDefault() && blacklistEnabled() && !Blacklist.INSTANCE.contains(query.getItem())){
 			shouldPickup = true;
+		}
+		else if(target == null) {
+			pickupTarget = false;
 		}
 		return new ClientResponsePacket(query, shouldPickup);
 	}
