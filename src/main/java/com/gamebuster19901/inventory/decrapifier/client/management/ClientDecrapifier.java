@@ -25,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
@@ -198,7 +199,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		}
 		EntityPlayerSP p = Minecraft.getMinecraft().player;
 		if (p == null) {return;}
-		if(p.openContainer == null){
+		if(p.openContainer instanceof ContainerPlayer){
 			for(Slot s :p.inventoryContainer.inventorySlots){
 				if (Blacklist.INSTANCE.contains(s.getStack())){
 					dropItem(0, s.slotNumber);
