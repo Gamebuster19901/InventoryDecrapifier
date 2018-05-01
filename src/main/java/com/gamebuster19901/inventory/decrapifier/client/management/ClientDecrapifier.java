@@ -12,6 +12,7 @@ import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
@@ -53,20 +54,22 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	
 	@SubscribeEvent
 	public final void onPlayerTick(TickEvent.PlayerTickEvent e) throws IllegalArgumentException, IllegalAccessException{
-		if(e.phase == TickEvent.Phase.START){
-			if(e.player.world.isRemote){
-				EntityItem newTarget = getEntityItemPlayerIsLookingAt(e.player, 5);
-				if(newTarget != null && e.player.getDistance(newTarget.posX, newTarget.posY, newTarget.posZ) <= 1.4d){
-					setGlowingItem(newTarget);
-				}
-				else{
-					setGlowingItem(null);
-				}
-				if (newTarget != null){
-					Blacklist.INSTANCE.contains(newTarget.getItem());
-				}
-				if(Minecraft.getMinecraft().gameSettings.isKeyDown(ClientProxy.getKeyBindings()[2])){
-					dropBlacklistedItems();
+		if(e.player == Minecraft.getMinecraft().player) {
+			if(e.phase == TickEvent.Phase.START){
+				if(e.player.world.isRemote){
+					EntityItem newTarget = getEntityItemPlayerIsLookingAt(e.player, 5);
+					if(newTarget != null && e.player.getDistance(newTarget.posX, newTarget.posY, newTarget.posZ) <= 1.4d){
+						setGlowingItem(newTarget);
+					}
+					else{
+						setGlowingItem(null);
+					}
+					if (newTarget != null){
+						Blacklist.INSTANCE.contains(newTarget.getItem());
+					}
+					if(Minecraft.getMinecraft().gameSettings.isKeyDown(ClientProxy.getKeyBindings()[2])){
+						dropBlacklistedItems();
+					}
 				}
 			}
 		}
@@ -161,16 +164,21 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		if(target != null && query.getUUID().equals(target.getUniqueID()) && pickupTarget) {
 			shouldPickup = true;
 			pickupTarget = false;
+			Main.LOGGER.log(Level.INFO, 1);
 		}
 		else if(pickupItemsByDefault() && !blacklistEnabled()) {
 			shouldPickup = true;
+			Main.LOGGER.log(Level.INFO, 2);
 		}
 		else if(pickupItemsByDefault() && blacklistEnabled() && !Blacklist.INSTANCE.contains(query.getItem())){
 			shouldPickup = true;
+			Main.LOGGER.log(Level.INFO, 3);
 		}
 		else if(target == null) {
 			pickupTarget = false;
+			Main.LOGGER.log(Level.INFO, 4);
 		}
+		Main.LOGGER.log(Level.INFO, 5);
 		return new ClientResponsePacket(query, shouldPickup);
 	}
 	

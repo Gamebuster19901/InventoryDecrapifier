@@ -9,6 +9,7 @@ import com.gamebuster19901.inventory.decrapifier.common.CommonDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.common.PlayerPickupQueue;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerAskPickupItemPacket;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerHasModPacket;
+import com.gamebuster19901.inventory.decrapifier.common.events.pickup.PickupResponse;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,16 +23,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class ServerDecrapifier extends CommonDecrapifier{
 	public static final LinkedHashSet<ConnectedClient> clients = new LinkedHashSet<ConnectedClient>();
-	private AllPlayerPickupsHashSet pickups = new AllPlayerPickupsHashSet();
+	private PlayerPickupQueue pickups = new PlayerPickupQueue();
 	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	protected void ServerTickEvent(TickEvent.ServerTickEvent e){
 		if(e.phase == TickEvent.Phase.END){
-			pickups.clear();
-		}
-		for(PlayerPickupQueue o : pickups) {
-			for(EntityItem entity : o) {
-				System.out.println(entity.getName());
+			synchronized(pickups) {
+				pickups.clear();
 			}
 		}
 	}
@@ -42,9 +40,8 @@ public class ServerDecrapifier extends CommonDecrapifier{
 			Main.Proxy.NETWORK.sendTo(new ServerAskPickupItemPacket(e.getItem().getUniqueID(), e.getItem().getItem()), (EntityPlayerMP)e.getEntityPlayer());
 			if(getClient(e.getEntityPlayer()).hasMod){
 				e.setCanceled(true);
-				PlayerPickupQueue set = pickups.get(e.getEntityPlayer());
-				if(set != null){
-					if(set.contains(e.getItem())){
+				for(PickupResponse r : pickups) {
+					if(r.getItem().isEntityEqual(e.getItem()) && r.getPlayer().isEntityEqual(e.getEntityPlayer()) && r.shouldPickup()) {
 						e.setCanceled(false);
 					}
 				}
@@ -52,14 +49,10 @@ public class ServerDecrapifier extends CommonDecrapifier{
 		}
 	}
 	
-	public void addPickup(EntityPlayer p, EntityItem e){
-		PlayerPickupQueue set = pickups.get(p);
-		if (set == null){
-			set = new PlayerPickupQueue(p);
-			pickups.add(set);
-		}
-		if (!set.contains(e)){
-			set.add(e);
+	public void addPickup(EntityPlayer p, EntityItem e, boolean shouldPickup){
+		pickups.add(new PickupResponse(p, e, shouldPickup));
+		if(shouldPickup) {
+			Main.LOGGER.log(Level.INFO, p + " wants " + e.toString());
 		}
 	}
 	

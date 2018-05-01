@@ -17,8 +17,11 @@ public class ClientResponseHandler implements IMessageHandler<ClientResponsePack
 		for(Entity e : new ArrayList<Entity>(ctx.getServerHandler().player.getServerWorld().loadedEntityList)){
 			if (e.getUniqueID().equals(message.getUUID())){
 				if (e instanceof EntityItem){
-					if(message.canPickup()) {
-						Main.Proxy.getServerDecrapifier().addPickup(ctx.getServerHandler().player,(EntityItem) e);
+					if(ctx.getServerHandler().player.getUniqueID().equals(message.getPlayer())){
+						Main.Proxy.getServerDecrapifier().addPickup(ctx.getServerHandler().player,(EntityItem) e, message.canPickup());
+					}
+					else {
+						throw new AssertionError("UUID does not match player");
 					}
 				}
 				else{
