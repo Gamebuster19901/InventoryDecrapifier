@@ -5,7 +5,6 @@ import static com.gamebuster19901.inventory.decrapifier.Main.MODID;
 import static org.apache.logging.log4j.Level.WARN;
 
 import java.util.ArrayList;
-
 import org.lwjgl.input.Keyboard;
 
 import com.gamebuster19901.inventory.decrapifier.client.events.listeners.ClientServerListener;
@@ -15,6 +14,7 @@ import com.gamebuster19901.inventory.decrapifier.client.gui.GUIConfig;
 import com.gamebuster19901.inventory.decrapifier.client.management.Blacklist;
 import com.gamebuster19901.inventory.decrapifier.client.management.ClientDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
+import com.gamebuster19901.inventory.decrapifier.client.narrator.DisableNarrator;
 import com.gamebuster19901.inventory.decrapifier.server.ServerDecrapifier;
 
 import net.minecraft.client.Minecraft;
@@ -76,6 +76,7 @@ public class ClientProxy extends Proxy{
 	@Override
 	public void postInit(FMLPostInitializationEvent e){
 		super.postInit(e);
+		new DisableNarrator();
 	}
 	
 	@SubscribeEvent
