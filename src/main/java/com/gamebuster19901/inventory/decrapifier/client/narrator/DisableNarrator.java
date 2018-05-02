@@ -10,7 +10,7 @@ public class DisableNarrator extends NarratorChatListener{
 
 	public DisableNarrator() {
 		try {
-			Field instanceField = ReflectionHelper.findField(NarratorChatListener.class, "INSTANCE", "field_179886_a");
+			Field instanceField = ReflectionHelper.findField(NarratorChatListener.class, "INSTANCE", "field_193643_a");
 			Field modifiersOfInstanceField = ReflectionHelper.findField(Field.class, "modifiers");
 			modifiersOfInstanceField.setInt(instanceField, instanceField.getModifiers() & ~Modifier.FINAL);
 			instanceField.set(null, this);
