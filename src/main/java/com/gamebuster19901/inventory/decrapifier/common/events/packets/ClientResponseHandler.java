@@ -2,6 +2,8 @@ package com.gamebuster19901.inventory.decrapifier.common.events.packets;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.Level;
+
 import com.gamebuster19901.inventory.decrapifier.Main;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -21,7 +23,7 @@ public class ClientResponseHandler implements IMessageHandler<ClientResponsePack
 						Main.Proxy.getServerDecrapifier().addPickup(ctx.getServerHandler().player,(EntityItem) e, message.canPickup());
 					}
 					else {
-						throw new AssertionError("UUID does not match player");
+						Main.LOGGER.log(Level.ERROR, "MessageContext in invalid state, attempted to process packet for " + ctx.getServerHandler().player.getName() + " that was meant for " + ctx.getServerHandler().player.world.getPlayerEntityByUUID(message.getPlayer()).getName() + "... Ignoring the packet!");
 					}
 				}
 				else{
