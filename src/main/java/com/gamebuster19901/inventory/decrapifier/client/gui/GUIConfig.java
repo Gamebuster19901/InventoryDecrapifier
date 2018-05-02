@@ -9,7 +9,6 @@ import java.util.List;
 import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -23,7 +22,6 @@ public class GUIConfig extends net.minecraftforge.fml.client.config.GuiConfig{
 	public static final Property blacklistEnabled = CONFIG.get("Main", "isBlackListOn", false, "If true, you will not pickup anything in the blacklist, unless you press the 'Pick up Item' key");
 	public static final Property highlightEnabled = CONFIG.get("Main", "highlightSelectedItem", true, "If true, the item you are selecting for pickup will glow");
 	public static final Property pickupByDefault = CONFIG.get("Main", "pickupItemsByDefault", true, "If false, you will not pick up ANYTHING unless you press the 'Pick up Item' key while looking at the item you want");
-	public static final Property tossOnPickup = CONFIG.get("NonModServer", "tossBlackListedItemsOnPickup", true, "If the blacklist is on and this is true, then you will toss blacklisted items on pickup if you're not on a server with this mod installed " + TextFormatting.RED + " [NOT YET IMPLEMENTED]");
 	
 	public GUIConfig(GuiScreen parent){
 		super(
@@ -41,7 +39,6 @@ public class GUIConfig extends net.minecraftforge.fml.client.config.GuiConfig{
       
         //Add categories to config GUI
         list.add(categoryElement("Main", "General", "config.invDeCrap.category.general"));
-        list.add(categoryElement("NonModServer", "When server doesn't have this mod installed", "config.invDeCrap.category.NOS"));
       
         return list;
     }
