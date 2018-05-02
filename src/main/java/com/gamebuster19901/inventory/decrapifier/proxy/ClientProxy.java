@@ -161,32 +161,12 @@ public class ClientProxy extends Proxy{
 		getConfig().save();
 	}
 	
-	public static final boolean serverContainsMod(){
-		return doesServerContainMod;
-	}
-	
-	public static final String getConnectionType(){
-		return SERVER_TYPE;
-	}
-	
 	public static final Configuration getConfig(){
 		return CONFIG;
 	}
 	
 	public static final KeyBinding[] getKeyBindings(){
 		return KEYBINDINGS;
-	}
-	
-	public static final void setConnectionType(String s){
-		if (s.equals("MODDED") || s.equals("BUKKIT") || s.equals("VANILLA") || s.equals("NONE")){
-			SERVER_TYPE = s;
-			System.out.println("Connected to a " + SERVER_TYPE + " server");
-			if(s.equals("VANILLA") || s.equals("NONE")){
-				doesServerContainMod = false;
-			}
-			return;
-		}
-		throw new IllegalArgumentException(s + " is not valid");
 	}
 	
 	private final static void config(){
