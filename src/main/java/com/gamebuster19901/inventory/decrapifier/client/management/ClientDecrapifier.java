@@ -182,25 +182,6 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		return new ClientResponsePacket(query, shouldPickup);
 	}
 	
-/*	@SubscribeEvent
-	@Override
-	public final void onPickup(EntityItemPickupEvent e){
-		debug(maxDistance);
-		EntityItem entity = e.getItem();
-		if((target != null && target.equals(entity) && pickupTarget) || (pickupItemsByDefault() && !blacklistEnabled()) || (pickupItemsByDefault() && blacklistEnabled() && !BannedItems.contains(((EntityItem)entity).getItem()))){
-			pickups.add(e.getItem());
-			return;
-		}
-		else{
-			debug((target != null) + " " + 1);
-			if (target != null){
-				debug(target.equals(entity) + " " + 2);
-			}
-			debug(pickupTarget + " " + 3);
-		}
-		e.setCanceled(true);
-	}*/
-	
 	public void dropBlacklistedItems(){
 		if (Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatOpen()) {
 			return;
