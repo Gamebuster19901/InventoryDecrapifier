@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Keyboard;
 
+import static net.minecraft.util.text.TextFormatting.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -148,8 +149,8 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 			case 4:
 				if(justPressed) {
 					boolean newBlacklistState = !blacklistEnabled();
-					String message = "§e[" + Main.MODNAME + "]:§r " + I18n.format("invdecrap.message.blacklist");
-					message = newBlacklistState ? message + " §a§l" + I18n.format("addServer.resourcePack.enabled") : message + " §c§l" + I18n.format("addServer.resourcePack.disabled");
+					String message = YELLOW + "[" + Main.MODNAME + "]: " + RESET + I18n.format("invdecrap.message.blacklist") + " ";
+					message = newBlacklistState ? message + GREEN + BOLD + I18n.format("addServer.resourcePack.enabled") : message + RED + BOLD + I18n.format("addServer.resourcePack.disabled");
 					GUIConfig.blacklistEnabled.set(newBlacklistState);
 					GUIConfig.CONFIG.save();
 					p.sendMessage(new TextComponentString(message));
