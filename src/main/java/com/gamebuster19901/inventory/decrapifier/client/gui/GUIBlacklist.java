@@ -29,7 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 
-public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
+public class GUIBlacklist extends EditScreen{
 	static final int xPadding = 85; //minimum distance from vertical sides of screen
 	static final int yPadding = 25; //minimum distance from horizontal sides of screen
 	private final Overlay overlay = new Overlay(this);
@@ -66,7 +66,7 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 						curArrow.visible = topPage > 0;
 					}
 					else if(curArrow.direction == EAST){
-						curArrow.visible = topPage < getTotalColumns(Top) - getVisibleColumnCount(Top);
+						curArrow.visible = topPage < getTotalCount(Top) - getVisibleCount(Top);
 					}
 				}
 				else if (curArrow.seg == Bottom){
@@ -74,7 +74,7 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 						curArrow.visible = bottomPage > 0;
 					}
 					else if (curArrow.direction == EAST){
-						curArrow.visible = bottomPage < getTotalColumns(Bottom) - getVisibleColumnCount(Bottom);
+						curArrow.visible = bottomPage < getTotalCount(Bottom) - getVisibleCount(Bottom);
 					}
 				}
 				continue;
@@ -227,10 +227,6 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 		return button;
 	}
 	
-	/**
-	 * Called when a button is pressed down
-	 * @param button the button that was pressed
-	 */
 	@Override
 	protected void actionPerformed(GuiButton button){
 		if(button.visible) {
@@ -252,12 +248,8 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 			}
 		}
 	}
-	/**
-	 * Gets the amount of visible columns
-	 * @param isOre
-	 * @return
-	 */
-	private int getVisibleColumnCount(GUISegment s){
+	
+	private int getVisibleCount(GUISegment s){
 		int ret = 0;
 		if(s == Top){
 			for(GuiButton b : buttonList){
@@ -278,7 +270,7 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 		throw new AssertionError();
 	}
 	
-	private int getTotalColumns(GUISegment s){
+	private int getTotalCount(GUISegment s){
 		int ret = 0;
 		if(s == Top){
 			for(GuiButton b : buttonList){
@@ -445,7 +437,7 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 			}
 			else{
 				if (this.direction == EAST){
-					x = (getVisibleColumnCount(getGUISegment()) * 16 + (getVisibleColumnCount(getGUISegment()) * ItemButton.xPadding)) + xPadding;
+					x = (getVisibleCount(getGUISegment()) * 16 + (getVisibleCount(getGUISegment()) * ItemButton.xPadding)) + xPadding;
 				}
 				else{
 					x = xPadding - width - ItemButton.xPadding;
