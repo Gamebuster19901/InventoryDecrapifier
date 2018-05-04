@@ -317,7 +317,6 @@ public class GUIBlacklist extends EditScreen{
 		public void drawButton(Minecraft mc, int mouseX, int mouseY, float unknown){
 			assert item != null;
 			if (this.visible){
-				//super.drawButton(mc, mouseX, mouseY);
 				GL11.glDisable(GL11.GL_LIGHTING);
 				drawItem();
 			}
@@ -346,7 +345,6 @@ public class GUIBlacklist extends EditScreen{
 		
 		@Override
 		protected void onClick() {
-			//mc.player.closeScreen();
 			if(seg == Top){
 				mc.player.openGui(Main.getInstance(), GUI_BLACKLIST_ADD_ID, mc.player.world, (int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ);
 			}
@@ -357,7 +355,6 @@ public class GUIBlacklist extends EditScreen{
 
 		@Override
 		public GUISegment getGUISegment() {
-			// TODO Auto-generated method stub
 			return seg;
 		}
 	}
