@@ -175,6 +175,9 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 					throw new AssertionError("OreDictionary value exists in ID only list! (" + l.getDataAsString() + ")");
 				}
 			}
+			else{
+				throw new IllegalStateException("List items cannot be null!");
+			}
 		}
 		total = 0;
 		col = 0;
@@ -190,6 +193,9 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 					buttonList.add(new ItemButton(id++, xPadding + (((realcol * 16) + (realcol * ItemButton.xPadding))), (height/2 + yPadding) + (row * 16) + (row * ItemButton.yPadding), col, row, l));
 					row++;
 					total++;
+				}
+				else {
+					throw new AssertionError("OreDictionary value exists in ID only list! (" + l.getDataAsString() + ")");
 				}
 			}
 			else{
