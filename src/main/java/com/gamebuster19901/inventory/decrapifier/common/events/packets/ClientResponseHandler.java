@@ -17,7 +17,7 @@ public class ClientResponseHandler implements IMessageHandler<ClientResponsePack
 	@Override
 	public IMessage onMessage(ClientResponsePacket message, MessageContext ctx) {
 		for(Entity e : new ArrayList<Entity>(ctx.getServerHandler().player.getServerWorld().loadedEntityList)){
-			if (e.getUniqueID().equals(message.getUUID())){
+			if (message != null && e.getUniqueID().equals(message.getUUID())){
 				if (e instanceof EntityItem){
 					if(ctx.getServerHandler().player.getUniqueID().equals(message.getPlayer())){
 						Main.Proxy.getServerDecrapifier().addPickup(ctx.getServerHandler().player,(EntityItem) e, message.canPickup());
@@ -28,7 +28,6 @@ public class ClientResponseHandler implements IMessageHandler<ClientResponsePack
 				}
 				else{
 					ctx.getServerHandler().disconnect(new TextComponentString("[InventoryDecrapifier] Malformed packets:\n" + e + "\nis not an EntityItem"));
-					//func_194028_b = disconnect
 				}
 			}
 		}
