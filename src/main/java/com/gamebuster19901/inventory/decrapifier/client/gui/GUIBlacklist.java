@@ -13,8 +13,6 @@ import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.
 import static net.minecraft.util.EnumFacing.EAST; //right
 import static net.minecraft.util.EnumFacing.WEST; //left
 
-import java.util.ArrayList;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -36,8 +34,6 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 	static final int yPadding = 25; //minimum distance from horizontal sides of screen
 	private final Overlay overlay = new Overlay(this);
 	private Mode mode = Edit;
-	private boolean hasRegistered = false; //A flag to tell if the screen needs to be updated, false means it needs to update
-	private ArrayList<GuiButton> components = new ArrayList<GuiButton>(); //list of GuiButtons, used to update GuiScreen.buttonList
 	private float prevVignetteBrightness = 1f;
 	
 	private static int topPage = 0;
@@ -51,30 +47,60 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 	
 	@Override
 	public void initGui(){
-		hasRegistered = false;
-		buttonList.clear();
 		Keyboard.enableRepeatEvents(true);
+		createComponents();
 	}
 	
 	
 	@Override
 	public void updateScreen(){
-		if (!hasRegistered){
-			constructComponents();
-			buttonList.clear();
-			for(GuiButton component : components){
-				if (component != null){
-					//check if component is out of bounds, if it is, don't make it visible
-					if (component instanceof ItemButton && (component.x < this.xPadding || component.x + component.width > width - xPadding)){ //5 had to be added to fix the selection arrow moving over but the last column still remaining visible, unknown as to why
-						component.visible = false;
+		/*
+		 * Make arrows visible if the item buttons leave the screen
+		 */
+		for(GuiButton s : buttonList){
+			if (s instanceof ArrowButton){
+				ArrowButton curArrow = (ArrowButton) s;
+				curArrow.updatePosition();
+				if (curArrow.seg == Top){
+					if(curArrow.direction == WEST){
+						curArrow.visible = topPage > 0;
 					}
-					else{
-						component.visible = true;
+					else if(curArrow.direction == EAST){
+						curArrow.visible = topPage < getTotalColumns(Top) - getVisibleColumnCount(Top);
 					}
-					buttonList.add(component);
 				}
+				else if (curArrow.seg == Bottom){
+					if (curArrow.direction == WEST){
+						curArrow.visible = bottomPage > 0;
+					}
+					else if (curArrow.direction == EAST){
+						curArrow.visible = bottomPage < getTotalColumns(Bottom) - getVisibleColumnCount(Bottom);
+					}
+				}
+				continue;
 			}
-			hasRegistered = true;
+			else if (s instanceof ItemButton) {
+				ItemButton i = (ItemButton) s;
+				int realcol;
+				int realrow;
+				switch(i.segment) {
+					case Top:
+						realcol = i.column - topPage;
+						realrow = yPadding + (i.row * 16) + (i.row * ItemButton.yPadding);
+						break;
+					case Bottom:
+						realcol = i.column - bottomPage;
+						realrow = (height/2 + yPadding) + (i.row * 16) + (i.row * ItemButton.yPadding);
+						break;
+					default:
+						throw new AssertionError();
+				}
+				s.x = xPadding + (((realcol * 16) + (realcol * ItemButton.xPadding)));
+				s.y = realrow;
+				
+				//check if item button is out of bounds, if it is, don't make it visible
+				s.visible = !(s.x < this.xPadding || s.x + s.width > width - xPadding);
+			}
 		}
 	}
 	
@@ -97,46 +123,13 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 		}
 		GL11.glScalef(0.5f, 0.5f, 0.5f);
 		GlStateManager.color(1f, 1f, 1f);
-		/*
-		 * Make arrows visible if the item buttons leave the screen
-		 */
-		for(GuiButton s : components){
-			if (s instanceof ArrowButton){
-				ArrowButton curArrow = (ArrowButton) s;
-				curArrow.updatePosition();
-				if (curArrow.seg == Top){
-					if(curArrow.direction == WEST){
-						if (topPage <= 0){
-							curArrow.visible = false;
-						}
-					}
-					else if(curArrow.direction == EAST){
-						if (topPage >= getTotalColumns(Top) - getVisibleColumnCount(Top)){
-							curArrow.visible = false;
-						}
-					}
-				}
-				else if (curArrow.seg == Bottom){
-					if (curArrow.direction == WEST){
-						if (bottomPage <=0){
-							curArrow.visible = false;
-						}
-					}
-					else if (curArrow.direction == EAST){
-						if (bottomPage >= getTotalColumns(Bottom) - getVisibleColumnCount(Bottom)){
-							curArrow.visible = false;
-						}
-					}
-				}
-			}
-		}
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 	
 	private ItemButton getLastItemButton(GUISegment s, int start){
 		for(int i = start; i > 0; i--){
-			if(components.get(i) instanceof ItemButton){
-				ItemButton lastButton = (ItemButton) components.get(i);
+			if(buttonList.get(i) instanceof ItemButton){
+				ItemButton lastButton = (ItemButton) buttonList.get(i);
 				if (lastButton.segment == s){
 					return lastButton;
 				}
@@ -146,7 +139,7 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 	}
 	
 	private ItemButton getFirstItemButton(GUISegment s){
-		for(GuiButton b : components){
+		for(GuiButton b : buttonList){
 			if (b instanceof ItemButton){
 				ItemButton button = (ItemButton) b;
 				if (button.segment == s){
@@ -158,15 +151,14 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 	}
 	
 	/**
-	 * creates and updates buttons on the screen, used to keep clutter out of the updateScreen method.
+	 * creates and updates buttons on the screen, used to keep clutter out of the initGui method.
 	 */
-	private void constructComponents(){
+	private void createComponents(){
 		boolean flag = false;
 		int id = 0;
 		int total = 0;
 		int col = 0; //x
 		int row = 0; //y
-		clear();
 		for(ListItem l : Blacklist.INSTANCE.getBannedIds()){
 			if (l != null){
 				if(!l.isOre()){
@@ -175,7 +167,7 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 						col++;
 					}
 					int realcol = col - topPage;
-					components.add(new ItemButton(id++, xPadding + (((realcol * 16) + (realcol * ItemButton.xPadding))), yPadding + (row * 16) + (row * ItemButton.yPadding), l));
+					buttonList.add(new ItemButton(id++, xPadding + (((realcol * 16) + (realcol * ItemButton.xPadding))), yPadding + (row * 16) + (row * ItemButton.yPadding), col, row, l));
 					row++;
 					total++;
 				}
@@ -184,21 +176,18 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 				}
 			}
 		}
+		total = 0;
+		col = 0;
+		row = 0;
 		for(ListItem l : Blacklist.INSTANCE.getBannedOres()) {
 			if(l != null) {
 				if(l.isOre()) {
-					if (!flag){
-						total = 0;
-						col = 0;
-						row = 0;
-						flag = !flag;
-					}
 					if(total != 0 && total % 3 == 0){
 						row = 0;
 						col++;
 					}
 					int realcol = col - bottomPage;
-					components.add(new ItemButton(id++, xPadding + (((realcol * 16) + (realcol * ItemButton.xPadding))), (height/2 + yPadding) + (row * 16) + (row * ItemButton.yPadding),l));
+					buttonList.add(new ItemButton(id++, xPadding + (((realcol * 16) + (realcol * ItemButton.xPadding))), (height/2 + yPadding) + (row * 16) + (row * ItemButton.yPadding), col, row, l));
 					row++;
 					total++;
 				}
@@ -208,26 +197,27 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 			}
 		}
 		addCustomButton(new EditButton(id++, width / 2 - 24, height / 2 - 26));
-		addCustomButton(new AddButton(id, components.get(id - 1).x + components.get(id - 1).width, components.get(id - 1).y, Top));
+		addCustomButton(new AddButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y, Top));
 		id++;
-		addCustomButton(new DeleteButton(id, components.get(id - 1).x + components.get(id - 1).width, components.get(id - 1).y));
+		addCustomButton(new DeleteButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y));
 		id++;
 		addCustomButton(new ArrowButton(id++, 0,0, EAST, Top));
 		addCustomButton(new ArrowButton(id++, 0,0, WEST, Top));
 		addCustomButton(new EditButton(id++, width / 2 - 24, height - 39));
-		addCustomButton(new AddButton(id, components.get(id - 1).x + components.get(id - 1).width, components.get(id - 1).y, Bottom));
+		addCustomButton(new AddButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y, Bottom));
 		id++;
-		addCustomButton(new DeleteButton(id, components.get(id - 1).x + components.get(id - 1).width, components.get(id - 1).y));
+		addCustomButton(new DeleteButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y));
 		id++;
+		addCustomButton(new ArrowButton(id++, 0,0, EAST, Bottom));
+		addCustomButton(new ArrowButton(id++, 0,0, WEST, Bottom));
 	}
 	
 	private void clear(){
-		components.clear();
 		buttonList.clear();
 	}
 	
 	private GuiButton addCustomButton(GuiButton button){
-		components.add(button);
+		buttonList.add(button);
 		return button;
 	}
 	
@@ -237,20 +227,23 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 	 */
 	@Override
 	protected void actionPerformed(GuiButton button){
-		if (button instanceof ItemButton){
-			if (mode == Delete && Blacklist.INSTANCE.removeFromBlacklist(((ItemButton) button).getListItem())){
-				buttonList.remove(button);
-				button = null;
-				initGui();
+		if(button.visible) {
+			if (button instanceof ItemButton){
+				if (mode == Delete && Blacklist.INSTANCE.removeFromBlacklist(((ItemButton) button).getListItem())){
+					buttonList.remove(button);
+					button = null;
+					clear();
+					initGui();
+				}
+				else if (mode == Edit){
+					GUIAddToBlacklist.passedData = ((ItemButton) button).getListItem();
+					mc.player.openGui(Main.getInstance(), GUI_BLACKLIST_ADD_WILD, mc.player.world, (int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ);
+				}
+				return;
 			}
-			else if (mode == Edit){
-				GUIAddToBlacklist.passedData = ((ItemButton) button).getListItem();
-				mc.player.openGui(Main.getInstance(), GUI_BLACKLIST_ADD_WILD, mc.player.world, (int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ);
+			if (button instanceof ImageButton){
+				((ImageButton) button).onClick();
 			}
-			return;
-		}
-		if (button instanceof ImageButton){
-			((ImageButton) button).onClick();
 		}
 	}
 	/**
@@ -261,8 +254,16 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 	private int getVisibleColumnCount(GUISegment s){
 		int ret = 0;
 		if(s == Top){
-			for(GuiButton b : components){
+			for(GuiButton b : buttonList){
 				if (b instanceof ItemButton && ((ItemButton)b).segment == Top && b.visible){
+					ret++;
+				}
+			}
+			return (int)Math.ceil((double)ret / 3d);
+		}
+		else if(s == Bottom){
+			for(GuiButton b : buttonList){
+				if (b instanceof ItemButton && ((ItemButton)b).segment == Bottom && b.visible){
 					ret++;
 				}
 			}
@@ -274,8 +275,16 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 	private int getTotalColumns(GUISegment s){
 		int ret = 0;
 		if(s == Top){
-			for(GuiButton b : components){
+			for(GuiButton b : buttonList){
 				if (b instanceof ItemButton && ((ItemButton)b).segment == Top){
+					ret++;
+				}
+			}
+			return (int)Math.ceil((double)ret / 3d);
+		}
+		else if(s == Bottom) {
+			for(GuiButton b : buttonList) {
+				if(b instanceof ItemButton && ((ItemButton)b).segment == Bottom) {
 					ret++;
 				}
 			}
@@ -290,8 +299,10 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 		
 		private ListItem item;
 		private final GUISegment segment;
+		public final int column;
+		public final int row;
 		
-		public ItemButton(int buttonId, int x, int y, ListItem l) {
+		public ItemButton(int buttonId, int x, int y, int col, int row, ListItem l) {
 			super(buttonId, x, y, 16, 16, "");
 			item = l;
 			if (item.isOre()){
@@ -300,6 +311,8 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 			else{
 				segment = Top;
 			}
+			column = col;
+			this.row = row;
 		}
 		
 		@Override
@@ -387,14 +400,32 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 		
 		public void onClick(){
 			switch (seg){
-				case Top: switch (direction){
-					case EAST: topPage++; break;
-					case WEST: topPage--; break;
-					default: throw new IllegalStateException();
-				} break;
+				case Top: 
+					switch (direction){
+						case EAST: 
+							topPage++; 
+							break;
+						case WEST: 
+							topPage--; 
+							break;
+						default: 
+							throw new IllegalStateException();
+					}
+					break;
+				case Bottom:
+					switch (direction) {
+						case EAST:
+							bottomPage++;
+							break;
+						case WEST:
+							bottomPage--;
+							break;
+						default:
+							throw new IllegalStateException();
+					}
+					break;
 				default: throw new AssertionError();
 			}
-			GUIBlacklist.this.initGui();
 		}
 
 		@Override
@@ -408,13 +439,16 @@ public class GUIBlacklist extends EditScreen{ //Editable extends GuiScreen
 			}
 			else{
 				if (this.direction == EAST){
-					x = (getVisibleColumnCount(Top) * 16 + (getVisibleColumnCount(Top) * ItemButton.xPadding)) + xPadding;
+					x = (getVisibleColumnCount(getGUISegment()) * 16 + (getVisibleColumnCount(getGUISegment()) * ItemButton.xPadding)) + xPadding;
 				}
 				else{
 					x = xPadding - width - ItemButton.xPadding;
 				}
 				y = (2 * 16 + (3 * ItemButton.yPadding) + yPadding);
 				this.y -= this.height;
+				if(this.getGUISegment() == Bottom) {
+					this.y += GUIBlacklist.super.height/2;
+				}
 			}
 		}
 	}
