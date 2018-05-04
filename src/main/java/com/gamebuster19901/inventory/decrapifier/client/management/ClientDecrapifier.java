@@ -12,7 +12,6 @@ import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Keyboard;
 
 import static net.minecraft.util.text.TextFormatting.*;
@@ -165,21 +164,16 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		if(target != null && query.getUUID().equals(target.getUniqueID()) && pickupTarget) {
 			shouldPickup = true;
 			pickupTarget = false;
-			Main.LOGGER.log(Level.INFO, 1);
 		}
 		else if(pickupItemsByDefault() && !blacklistEnabled()) {
 			shouldPickup = true;
-			Main.LOGGER.log(Level.INFO, 2);
 		}
 		else if(pickupItemsByDefault() && blacklistEnabled() && !Blacklist.INSTANCE.contains(query.getItem())){
 			shouldPickup = true;
-			Main.LOGGER.log(Level.INFO, 3);
 		}
 		else if(target == null) {
 			pickupTarget = false;
-			Main.LOGGER.log(Level.INFO, 4);
 		}
-		Main.LOGGER.log(Level.INFO, 5);
 		return new ClientResponsePacket(query, shouldPickup);
 	}
 	

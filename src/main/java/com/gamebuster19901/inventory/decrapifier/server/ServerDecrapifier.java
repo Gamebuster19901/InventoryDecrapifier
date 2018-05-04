@@ -51,9 +51,6 @@ public class ServerDecrapifier extends CommonDecrapifier{
 	
 	public void addPickup(EntityPlayer p, EntityItem e, boolean shouldPickup){
 		pickups.add(new PickupResponse(p, e, shouldPickup));
-		if(shouldPickup) {
-			Main.LOGGER.log(Level.INFO, p + " wants " + e.toString());
-		}
 	}
 	
 	@SubscribeEvent
