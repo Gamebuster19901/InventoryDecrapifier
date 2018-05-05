@@ -13,6 +13,7 @@ key.invdecrap.openblacklistgui.description=Open Blacklist GUI
 
 blacklist.category.id=ID Blacklist
 blacklist.category.ore=OreDictionary Blacklist
+blacklist.category.blacklists=Blacklists
 blacklist.deletewarning.top=DELETE MODE ACTIVATED
 blacklist.deletewarning.bottom=ANYTHING YOU CLICK WILL BE DELETED
 

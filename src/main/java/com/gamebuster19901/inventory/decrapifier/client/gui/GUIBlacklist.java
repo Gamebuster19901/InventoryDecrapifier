@@ -10,8 +10,7 @@ import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Bottom;
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Sidebar;
 
-import static net.minecraft.util.EnumFacing.EAST; //right
-import static net.minecraft.util.EnumFacing.WEST; //left
+import static net.minecraft.util.EnumFacing.*;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -77,6 +76,9 @@ public class GUIBlacklist extends EditScreen{
 						curArrow.visible = bottomPage < getTotalCount(Bottom) - getVisibleCount(Bottom);
 					}
 				}
+				else if (curArrow.seg == Sidebar) {
+					curArrow.visible = false;
+				}
 				continue;
 			}
 			else if (s instanceof ItemButton) {
@@ -123,6 +125,10 @@ public class GUIBlacklist extends EditScreen{
 		}
 		GL11.glScalef(0.5f, 0.5f, 0.5f);
 		GlStateManager.color(1f, 1f, 1f);
+		GL11.glScalef(1.3f, 1.3f, 1.3f);
+		message = I18n.format("blacklist.category.blacklists");
+		fontRenderer.drawString(TextFormatting.UNDERLINE + message, xPadding / 2 - (int)(fontRenderer.getStringWidth(message) * (1f / 1.3f) - 4), 2, 16777215);
+		GL11.glScalef(1 / 1.3f, 1 / 1.3f, 1 / 1.3f);
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 	
@@ -216,6 +222,8 @@ public class GUIBlacklist extends EditScreen{
 		id++;
 		addCustomButton(new ArrowButton(id++, 0,0, EAST, Bottom));
 		addCustomButton(new ArrowButton(id++, 0,0, WEST, Bottom));
+		addCustomButton(new ArrowButton(id++, 0,0, NORTH, Sidebar));
+		addCustomButton(new ArrowButton(id++, 0,0, SOUTH, Sidebar));
 	}
 	
 	private void clear(){
@@ -430,7 +438,8 @@ public class GUIBlacklist extends EditScreen{
 		
 		public void updatePosition(){
 			if (seg == Sidebar){
-				this.x -= this.width;
+				this.x = 0;
+				this.y = 0;
 			}
 			else{
 				if (this.direction == EAST){

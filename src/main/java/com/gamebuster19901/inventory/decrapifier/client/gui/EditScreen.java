@@ -86,7 +86,8 @@ public abstract class EditScreen extends GuiScreen{
 		
 		private void setImage(){
 			switch(direction){
-				case NORTH: super.image = new ResourceLocation(MODID, "textures/gui/up.png");
+				case NORTH:
+					super.image = new ResourceLocation(MODID, "textures/gui/up.png");
 						imageHeight = 16;
 						imageWidth = 32;
 					break;
