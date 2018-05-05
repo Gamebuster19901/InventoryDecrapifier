@@ -159,7 +159,7 @@ public class GUIBlacklist extends EditScreen{
 		int total = 0;
 		int col = 0; //x
 		int row = 0; //y
-		for(ListItem l : Blacklist.INSTANCE.getBannedIds()){
+		for(ListItem l : Blacklist.getActiveBlacklist().getBannedIds()){
 			if (l != null){
 				if(!l.isOre()){
 					if (total != 0 && total % 3 == 0){
@@ -182,7 +182,7 @@ public class GUIBlacklist extends EditScreen{
 		total = 0;
 		col = 0;
 		row = 0;
-		for(ListItem l : Blacklist.INSTANCE.getBannedOres()) {
+		for(ListItem l : Blacklist.getActiveBlacklist().getBannedOres()) {
 			if(l != null) {
 				if(l.isOre()) {
 					if(total != 0 && total % 3 == 0){
@@ -231,7 +231,7 @@ public class GUIBlacklist extends EditScreen{
 	protected void actionPerformed(GuiButton button){
 		if(button.visible) {
 			if (button instanceof ItemButton){
-				if (mode == Delete && Blacklist.INSTANCE.removeFromBlacklist(((ItemButton) button).getListItem())){
+				if (mode == Delete && Blacklist.getActiveBlacklist().removeFromBlacklist(((ItemButton) button).getListItem())){
 					buttonList.remove(button);
 					button = null;
 					clear();

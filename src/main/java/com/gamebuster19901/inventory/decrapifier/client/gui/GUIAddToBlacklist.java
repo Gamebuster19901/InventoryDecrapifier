@@ -208,8 +208,8 @@ public class GUIAddToBlacklist extends EditScreen{
 	public void keyTyped(char c, int i) throws IOException{
  		super.keyTyped(c, i);
  		if (c == '\n' | c == '\r' | i == 28){
- 			if (Blacklist.INSTANCE.addToBlacklist(ListItem.fromString(idField.getText(), this.isOre))){
- 				if (this.parentListItem == null || Blacklist.INSTANCE.removeFromBlacklist(parentListItem)){
+ 			if (Blacklist.getActiveBlacklist().addToBlacklist(ListItem.fromString(idField.getText(), this.isOre), true)){
+ 				if (this.parentListItem == null || Blacklist.getActiveBlacklist().removeFromBlacklist(parentListItem)){
  					mc.player.openGui(Main.getInstance(), GUI_BLACKLIST, mc.player.world, (int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ);
  				}
  				else{
@@ -232,7 +232,7 @@ public class GUIAddToBlacklist extends EditScreen{
 	
 	public void setIDFieldColor(){
 		if(ListItem.fromString(idField.getText(), isOre) != null){
-			if (Blacklist.INSTANCE.contains(ListItem.fromString(idField.getText(), isOre))){
+			if (Blacklist.getActiveBlacklist().contains(ListItem.fromString(idField.getText(), isOre))){
 				idField.setTextColor(Color.yellow.hashCode());
 			}
 			else{

@@ -32,14 +32,19 @@ public final class ListItemArrayList extends ArrayList<ListItem>{
 		return ret;
 	}
 	
-	@Override
-	public boolean add(ListItem l){
+	public boolean add(ListItem l) {
+		throw new UnsupportedOperationException("Use add(ListItem, boolean)");
+	}
+	
+	public boolean add(ListItem l, boolean sync){
 		boolean ret = false;
 		if (!this.contains(l)){
 			ret = true;
 			super.add(l);
 		}
-		((ClientProxy) Main.Proxy).syncToFile();
+		if(sync) {
+			((ClientProxy) Main.Proxy).syncToFile();
+		}
 		return ret;
 	}
 	

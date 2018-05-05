@@ -35,12 +35,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-
-/*
- * TODO:
- * Is this a god object? Should I break this up into multiple classes?
- */
-
 public final class ClientDecrapifier extends CommonDecrapifier{
 	private static final Field isGlowing = ReflectionHelper.findField(Entity.class, new String[]{"glowing", "field_184238_ar"});
 	private static final Field pickupDelay = ReflectionHelper.findField(EntityItem.class, new String[]{"pickupDelay", "field_145804_b"});
@@ -65,7 +59,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 						setGlowingItem(null);
 					}
 					if (newTarget != null){
-						Blacklist.INSTANCE.contains(newTarget.getItem());
+						Blacklist.getActiveBlacklist().contains(newTarget.getItem());
 					}
 					if(Minecraft.getMinecraft().gameSettings.isKeyDown(ClientProxy.getKeyBindings()[2])){
 						dropBlacklistedItems();
@@ -89,7 +83,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	 */
 	private final void setGlowingItem(EntityItem item){
 		if (item != null){
-			if (!pickupItemsByDefault() || (blacklistEnabled() && Blacklist.INSTANCE.contains(item.getItem()))){
+			if (!pickupItemsByDefault() || (blacklistEnabled() && Blacklist.getActiveBlacklist().contains(item.getItem()))){
 				setGlowing(target, false);
 				target = item;
 				setGlowing(target, highlightEnabled());
@@ -168,7 +162,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		else if(pickupItemsByDefault() && !blacklistEnabled()) {
 			shouldPickup = true;
 		}
-		else if(pickupItemsByDefault() && blacklistEnabled() && !Blacklist.INSTANCE.contains(query.getItem())){
+		else if(pickupItemsByDefault() && blacklistEnabled() && !Blacklist.getActiveBlacklist().contains(query.getItem())){
 			shouldPickup = true;
 		}
 		else if(target == null) {
@@ -185,7 +179,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		if (p == null) {return;}
 		if(p.openContainer instanceof ContainerPlayer){
 			for(Slot s :p.inventoryContainer.inventorySlots){
-				if (Blacklist.INSTANCE.contains(s.getStack())){
+				if (Blacklist.getActiveBlacklist().contains(s.getStack())){
 					dropItem(0, s.slotNumber);
 				}
 			}
@@ -194,7 +188,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 			if(controlPressed()) {
 				int windowID = p.openContainer.windowId;
 				for(Slot s : p.openContainer.inventorySlots){
-					if(Blacklist.INSTANCE.contains(s.getStack())){
+					if(Blacklist.getActiveBlacklist().contains(s.getStack())){
 						dropItem(windowID, s.slotNumber);
 					}
 				}
@@ -247,7 +241,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 		int j = 0;
 		for(ItemStack i : items){
 			if (i != null && i.getItem() != null){
-				if(Blacklist.INSTANCE.contains(i)){
+				if(Blacklist.getActiveBlacklist().contains(i)){
 					container[j] = null;
 					p.dropItem(i, true);
 				}

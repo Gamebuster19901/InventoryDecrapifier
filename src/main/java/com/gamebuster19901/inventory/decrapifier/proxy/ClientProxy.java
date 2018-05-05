@@ -1,10 +1,6 @@
 package com.gamebuster19901.inventory.decrapifier.proxy;
 
-import static com.gamebuster19901.inventory.decrapifier.Main.LOGGER;
 import static com.gamebuster19901.inventory.decrapifier.Main.MODID;
-import static org.apache.logging.log4j.Level.WARN;
-
-import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 
 import com.gamebuster19901.inventory.decrapifier.client.events.listeners.ClientServerListener;
@@ -13,12 +9,12 @@ import com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist;
 import com.gamebuster19901.inventory.decrapifier.client.gui.GUIConfig;
 import com.gamebuster19901.inventory.decrapifier.client.management.Blacklist;
 import com.gamebuster19901.inventory.decrapifier.client.management.ClientDecrapifier;
-import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
 import com.gamebuster19901.inventory.decrapifier.client.narrator.DisableNarrator;
 import com.gamebuster19901.inventory.decrapifier.server.ServerDecrapifier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,7 +25,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class ClientProxy extends Proxy{
 	private static final KeyBinding[] KEYBINDINGS = new KeyBinding[]{
@@ -105,58 +100,26 @@ public class ClientProxy extends Proxy{
 	}
 	
 	private final void syncToGUI(){
-		ArrayList<String> FailedIDs = new ArrayList<String>();
-		ArrayList<String> FailedOre = new ArrayList<String>();
-		String[] blackListID = GUIConfig.blacklistIds.getStringList();
-		String[] blackListOreDictionary = GUIConfig.blacklistOres.getStringList();
-		ClientDecrapifier decrap = (ClientDecrapifier) getDecrapifier();
-		Blacklist blacklist = Blacklist.INSTANCE;
-		blacklist.clearBannedItems();
-		for(int i = 0; i < blackListID.length; i++){
-			System.out.println(ListItem.fromString(blackListID[i], false));
-			if (ListItem.fromString(blackListID[i], false) != null){
-				blacklist.addToBlacklist(ListItem.fromString(blackListID[i], false));
-				//decrap.addToBlacklist(new ItemStack(Item.getByNameOrId(blackListID[i])));
-			}
-			else{
-				FailedIDs.add(blackListID[i]);
-			}
-		}
-		for(int i = 0; i < blackListOreDictionary.length; i++){
-			if(OreDictionary.doesOreNameExist(blackListOreDictionary[i])){
-				blacklist.addToBlacklist(ListItem.fromString(blackListOreDictionary[i], true));
-			}
-			else{
-				FailedOre.add(blackListOreDictionary[i]);
-			}
-		}
-		if (FailedIDs.size() > 0){
-			LOGGER.log(WARN, "The following item IDs could not be added to the blacklist because they do not exist:");
-			for(String s : FailedIDs){
-				LOGGER.log(WARN, "\"" + s + "\"");
-			}
-		}
-		if (FailedOre.size() > 0){
-			LOGGER.log(WARN, "The following OreDictionary values could not be added to the blacklist because they do not exist:");
-			for(String s : FailedOre){
-				LOGGER.log(WARN, "\"" + s + "\"");
-			}
-		}
+		Blacklist.updateBlacklistsFromConfig();
 	}
 	
 	public final void syncToFile(){
-		ArrayList<String> blackListID = new ArrayList<String>();
-		ArrayList<String> blackListOres = new ArrayList<String>();
-		for(ListItem l: Blacklist.INSTANCE.getBannedItems()){
-			if (l.isOre()){
-				blackListOres.add(l.toString());
-			}
-			else{
-				blackListID.add(l.toString());
-			}
+		Blacklist[] blacklists = (Blacklist[]) Blacklist.getBlacklists().values().toArray(new Blacklist[]{});
+		String[] blacklistsAsString = new String[blacklists.length];
+		
+		if(blacklistsAsString.length == 0) {
+			throw new AssertionError("No blacklists to save, this should be impossible!");
 		}
-		GUIConfig.blacklistIds.setValues(blackListID.toArray(new String[]{}));
-		GUIConfig.blacklistOres.setValues(blackListOres.toArray(new String[]{}));
+		for(int i = 0; i < blacklistsAsString.length; i++) {
+			blacklistsAsString[i] = blacklists[i].toNBT().toString();
+		}
+		
+		if(Blacklist.getActiveBlacklist() == null) {
+			throw new AssertionError(new NullPointerException("No active blacklist, this should be impossible!"));
+		}
+		
+		GUIConfig.currentBlacklist.set(Blacklist.getActiveBlacklist().getName());
+		GUIConfig.blacklists.setValues(blacklistsAsString);
 		new ConfigChangedEvent(MODID, CONFIG.getConfigFile().getName(), true, false);
 		getConfig().save();
 	}
