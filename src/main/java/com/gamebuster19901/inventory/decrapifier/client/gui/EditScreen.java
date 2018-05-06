@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 public abstract class EditScreen extends GuiScreen{
 	public EditScreen(){
@@ -107,6 +108,14 @@ public abstract class EditScreen extends GuiScreen{
 					throw new AssertionError("Direction is not valid!");
 			}
 		}
+	}
+	
+	protected abstract class BlacklistButton extends GuiButtonExt implements Dependant{
+
+		public BlacklistButton(int id, int width, int height, String displayString) {
+			super(id, 0, 0, width, height, displayString);
+		}
+		
 	}
 	
 	protected interface Dependant{

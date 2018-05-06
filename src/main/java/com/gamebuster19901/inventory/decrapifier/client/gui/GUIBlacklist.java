@@ -23,6 +23,7 @@ import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -103,6 +104,10 @@ public class GUIBlacklist extends EditScreen{
 				//check if item button is out of bounds, if it is, don't make it visible
 				s.visible = !(s.x < this.xPadding || s.x + s.width > width - xPadding);
 			}
+			else if (s instanceof BlacklistButton) {
+				((BlacklistButton)s).updatePosition();
+				
+			}
 		}
 	}
 	
@@ -110,6 +115,7 @@ public class GUIBlacklist extends EditScreen{
 	public void drawScreen(int mouseX, int mouseY, float partialTicks){
 		this.drawDefaultBackground();
 		String message;
+		GlStateManager.pushMatrix();
 		GL11.glScalef(2, 2, 2);
 		if(mode == Delete){
 			message = I18n.format("blacklist.deletewarning.top");
@@ -129,6 +135,7 @@ public class GUIBlacklist extends EditScreen{
 		message = I18n.format("blacklist.category.blacklists");
 		fontRenderer.drawString(TextFormatting.UNDERLINE + message, xPadding / 2 - (int)(fontRenderer.getStringWidth(message) * (1f / 1.3f) - 4), 2, 16777215);
 		GL11.glScalef(1 / 1.3f, 1 / 1.3f, 1 / 1.3f);
+		GlStateManager.popMatrix();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 	
@@ -165,6 +172,20 @@ public class GUIBlacklist extends EditScreen{
 		int total = 0;
 		int col = 0; //x
 		int row = 0; //y
+		
+		for(Blacklist b : Blacklist.getBlacklists().values()) {
+			if(b != null) {
+				addCustomButton(new BlacklistButton(id++, row, b.getName()));
+				row++;
+			}
+			else {
+				throw new IllegalStateException("Blacklists cannot be null!");
+			}
+		}
+		
+		row = 0;
+		total = 0;
+		
 		for(ListItem l : Blacklist.getActiveBlacklist().getBannedIds()){
 			if (l != null){
 				if(!l.isOre()){
@@ -208,6 +229,7 @@ public class GUIBlacklist extends EditScreen{
 				throw new IllegalStateException("List items cannot be null!");
 			}
 		}
+		
 		addCustomButton(new EditButton(id++, width / 2 - 24, height / 2 - 26));
 		addCustomButton(new AddButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y, Top));
 		id++;
@@ -325,7 +347,7 @@ public class GUIBlacklist extends EditScreen{
 		public void drawButton(Minecraft mc, int mouseX, int mouseY, float unknown){
 			assert item != null;
 			if (this.visible){
-				GL11.glDisable(GL11.GL_LIGHTING);
+				RenderHelper.enableGUIStandardItemLighting();
 				drawItem();
 			}
 		}
@@ -455,6 +477,32 @@ public class GUIBlacklist extends EditScreen{
 				}
 			}
 		}
+	}
+	
+	private final class BlacklistButton extends EditScreen.BlacklistButton{
+		public final int row;
+
+		public BlacklistButton(int id, int row, String displayString) {
+			super(id, 0, 16, displayString);
+			this.row = row;
+		}
+		
+		public void updatePosition() {
+			this.width = xPadding - 10;
+			if(this.getGUISegment() == Sidebar) {
+				this.x = xPadding - width - 5;
+				this.y = 18 * (row + 1);
+			}
+			else {
+				throw new AssertionError("Blacklist buttons cannot exist outside of the sidebar!");
+			}
+		}
+
+		@Override
+		public GUISegment getGUISegment() {
+			return Sidebar;
+		}
+		
 	}
 	
 	static enum Mode{
