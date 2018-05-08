@@ -31,8 +31,6 @@ public class GUIHandler implements IGuiHandler{
 				break;
 			case GUI_BLACKLIST_ADD_BLACKLIST: gui = new GUIAddBlacklist();
 				break;
-			case GUI_BLACKLIST_DEL_BLACKLIST_CONFIRM: gui = new GUIDelBlacklist();
-				break;
 				
 			default: gui = null;
 		}
