@@ -15,7 +15,7 @@ blacklist.deletewarning.top=DELETE MODE ACTIVATED
 blacklist.deletewarning.bottom=ANYTHING YOU CLICK WILL BE DELETED
 blacklist.instruction.add.ore=Enter an OreDictionary value
 blacklist.instruction.add.id=Enter an Item ID
-blacklist.instruciton.add.select=or select an item from your inventory
+blacklist.instruction.add.select=or select an item from your inventory
 blacklist.instruction.add.blacklist=Enter a name for your blacklist
 blacklist.instruction.cancel=Press ESC to cancel
 
