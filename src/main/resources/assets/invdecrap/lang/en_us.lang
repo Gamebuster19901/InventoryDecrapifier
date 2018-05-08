@@ -1,13 +1,10 @@
 config.invdecrap.category.general=General
 config.invdecrap.category.general.tooltip=General Settings
-config.invdecrap.category.NOS=When server doesn't have this mod installed
-config.invdecrap.category.NOS.tooltip=Settings for when the server doesn't have this mod installed
 
 key.invdecrap.category=Inventory Decrapifier
 
 key.invdecrap.pickup.description=Pick Up Item
 key.invdecrap.decrapify.description=Decrapify Inventory
-key.invdecrap.quickblacklist.description=Quick Blacklist [NOT YET IMPLEMENTED]
 key.invdecrap.toggleblacklist.description=Toggle Blacklist
 key.invdecrap.openblacklistgui.description=Open Blacklist GUI
 
@@ -16,5 +13,10 @@ blacklist.category.ore=OreDictionary Blacklist
 blacklist.category.blacklists=Blacklists
 blacklist.deletewarning.top=DELETE MODE ACTIVATED
 blacklist.deletewarning.bottom=ANYTHING YOU CLICK WILL BE DELETED
+blacklist.instruction.add.ore=Enter an OreDictionary value
+blacklist.instruction.add.id=Enter an Item ID
+blacklist.instruciton.add.select=or select an item from your inventory
+blacklist.instruction.add.blacklist=Enter a name for your blacklist
+blacklist.instruction.cancel=Press ESC to cancel
 
 invdecrap.message.blacklist=Blacklist

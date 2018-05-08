@@ -23,10 +23,12 @@ public class Blacklist {
 	
 	private final ListItemArrayList bannedIds = new ListItemArrayList();
 	private final ListItemArrayList bannedOres = new ListItemArrayList();
-	private String name = "Blacklist " + blacklists.size() + 1;
+	private String name = "Blacklist " + (blacklists.size() + 1);
 	
-	private Blacklist(boolean put) {
-		blacklists.put(this.name, this);
+	public Blacklist(boolean put) {
+		if(put) {
+			blacklists.put(this.name, this);
+		}
 	};
 	
 	public Blacklist(String name) {
@@ -146,6 +148,23 @@ public class Blacklist {
 		activeBlacklist = null;
 	}
 	
+	public static final void removeBlacklist(Blacklist b) {
+		if(blacklists.size() == 1) {
+			return;
+		}
+		
+		if(blacklists.containsValue(b)) {
+			boolean flag = getActiveBlacklist() == b;
+			blacklists.remove(b.getName());
+			if(flag) {
+				setActiveBlacklist(blacklists.values().toArray(new Blacklist[] {})[0]);
+			}
+			((ClientProxy)Main.Proxy).syncToFile();
+			return;
+		}
+		throw new AssertionError(new IllegalStateException("Attempted to remove a blacklist that is not in the blacklist LinkedHashMap: " + b.getName()));
+	}
+	
 	public static final Blacklist getActiveBlacklist() {
 		if(activeBlacklist == null) {
 			LinkedHashMap<String, Blacklist> blacklists = getBlacklistsFromConfig();
@@ -158,6 +177,16 @@ public class Blacklist {
 			}
 		}
 		return activeBlacklist;
+	}
+	
+	public static final void setActiveBlacklist(Blacklist b) {
+		if(blacklists.containsValue(b)) {
+			activeBlacklist = b;
+			((ClientProxy)Main.Proxy).syncToFile();
+		}
+		else {
+			throw new AssertionError(new IllegalStateException("Attempted to set the blacklist to an instance which is not in the LinkedHashMap, this should be impossible!"));
+		}
 	}
 	
 	public static final boolean nameTaken(String name) {

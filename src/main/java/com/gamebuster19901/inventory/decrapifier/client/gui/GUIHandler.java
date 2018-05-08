@@ -9,6 +9,8 @@ public class GUIHandler implements IGuiHandler{
 	public static final int GUI_BLACKLIST_ADD_ID = 1;
 	public static final int GUI_BLACKLIST_ADD_ORE = 2;
 	public static final int GUI_BLACKLIST_ADD_WILD = 3;
+	public static final int GUI_BLACKLIST_ADD_BLACKLIST = 4;
+	public static final int GUI_BLACKLIST_DEL_BLACKLIST_CONFIRM = 5;
 	
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -27,6 +29,11 @@ public class GUIHandler implements IGuiHandler{
 				break;
 			case GUI_BLACKLIST_ADD_WILD: gui = new GUIAddToBlacklist();
 				break;
+			case GUI_BLACKLIST_ADD_BLACKLIST: gui = new GUIAddBlacklist();
+				break;
+			case GUI_BLACKLIST_DEL_BLACKLIST_CONFIRM: gui = new GUIDelBlacklist();
+				break;
+				
 			default: gui = null;
 		}
 		return gui;

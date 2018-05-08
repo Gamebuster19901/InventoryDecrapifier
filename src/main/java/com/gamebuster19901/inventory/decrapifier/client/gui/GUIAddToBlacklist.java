@@ -15,6 +15,7 @@ import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -35,6 +36,10 @@ public class GUIAddToBlacklist extends EditScreen{
 	private GuiTextField metaMin;
 	private GuiTextField metaMax;
 	private ListItem parentListItem;
+	
+	private final String addOreString = I18n.format("blacklist.instruction.add.ore");
+	private final String addItemString = I18n.format("blacklist.instruction.add.id");
+	private final String selectString = I18n.format("blacklist.instruction.add.select");
 	
 	private static Minecraft getMC(){
 		return Minecraft.getMinecraft();
@@ -90,12 +95,12 @@ public class GUIAddToBlacklist extends EditScreen{
 		this.drawDefaultBackground();
 		//this.idField.drawTextBox();
 		if(isOre){
-			fontRenderer.drawString("Enter an OreDictionary value", width / 2 - fontRenderer.getStringWidth("Enter an OreDictionary value") / 2, 60 - fontRenderer.FONT_HEIGHT * 2, Color.white.getRGB());
+			fontRenderer.drawString(addOreString, width / 2 - fontRenderer.getStringWidth(addOreString) / 2, 60 - fontRenderer.FONT_HEIGHT * 2, Color.white.getRGB());
 		}
 		else{
-			fontRenderer.drawString("Enter an Item", width / 2 - fontRenderer.getStringWidth("Enter an Item") / 2, 60 - fontRenderer.FONT_HEIGHT * 2, Color.white.getRGB());
+			fontRenderer.drawString(addItemString, width / 2 - fontRenderer.getStringWidth(addItemString) / 2, 60 - fontRenderer.FONT_HEIGHT * 2, Color.white.getRGB());
 		}
-		fontRenderer.drawString("or select an item from your inventory", width / 2 - fontRenderer.getStringWidth("or select an item from your inventory") / 2, 60 - fontRenderer.FONT_HEIGHT, Color.white.getRGB());
+		fontRenderer.drawString(selectString, width / 2 - fontRenderer.getStringWidth(selectString) / 2, 60 - fontRenderer.FONT_HEIGHT, Color.white.getRGB());
 		idField.drawTextBox();
 		for(GuiButton component : components){
 			if(component != null && component instanceof ItemButton){
@@ -143,10 +148,10 @@ public class GUIAddToBlacklist extends EditScreen{
 			idField.setMaxStringLength(100);
 			if (parentListItem == null){
 				if(isOre){
-					idField.setText("Enter an OreDictionary value");
+					idField.setText(addOreString);
 				}
 				else{
-					idField.setText("Enter an item");
+					idField.setText(addItemString);
 				}
 			}
 			else{
@@ -217,7 +222,7 @@ public class GUIAddToBlacklist extends EditScreen{
  				}
  			}
  		}
-		if(idField.getText().equals("Enter an OreDictionary value") || idField.getText().equals("Enter an item")){
+		if(idField.getText().equals(addOreString) || idField.getText().equals(addItemString)){
 			idField.setText("");
 		}
 		if (c != ' '){

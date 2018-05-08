@@ -2,9 +2,7 @@ package com.gamebuster19901.inventory.decrapifier.client.gui;
 
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.Mode.Delete;
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.Mode.Edit;
-import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler.GUI_BLACKLIST_ADD_ID;
-import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler.GUI_BLACKLIST_ADD_ORE;
-import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler.GUI_BLACKLIST_ADD_WILD;
+import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler.*;
 
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Top;
 import static com.gamebuster19901.inventory.decrapifier.client.gui.GUIBlacklist.GUISegment.Bottom;
@@ -16,12 +14,13 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.gamebuster19901.inventory.decrapifier.Main;
-import com.gamebuster19901.inventory.decrapifier.client.gui.components.Overlay;
 import com.gamebuster19901.inventory.decrapifier.client.management.Blacklist;
 import com.gamebuster19901.inventory.decrapifier.client.management.ListItem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
@@ -29,16 +28,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 
-public class GUIBlacklist extends EditScreen{
-	static final int xPadding = 85; //minimum distance from vertical sides of screen
+public class GUIBlacklist extends EditScreen implements GuiYesNoCallback{
+	static final int xPadding = 105; //minimum distance from vertical sides of screen
 	static final int yPadding = 25; //minimum distance from horizontal sides of screen
-	private final Overlay overlay = new Overlay(this);
 	private Mode mode = Edit;
 	private float prevVignetteBrightness = 1f;
 	
 	private static int topPage = 0;
 	private static int bottomPage = 0;
-	private static int LeftPage = 0;
+	private static int sidePage = 0;
 	
 	
 	public GUIBlacklist(){
@@ -78,7 +76,12 @@ public class GUIBlacklist extends EditScreen{
 					}
 				}
 				else if (curArrow.seg == Sidebar) {
-					curArrow.visible = false;
+					if(curArrow.direction == NORTH) {
+						curArrow.visible = sidePage > 0;
+					}
+					else if (curArrow.direction == SOUTH) {
+						curArrow.visible = sidePage < getTotalCount(Sidebar) - getVisibleCount(Sidebar);
+					}
 				}
 				continue;
 			}
@@ -133,7 +136,7 @@ public class GUIBlacklist extends EditScreen{
 		GlStateManager.color(1f, 1f, 1f);
 		GL11.glScalef(1.3f, 1.3f, 1.3f);
 		message = I18n.format("blacklist.category.blacklists");
-		fontRenderer.drawString(TextFormatting.UNDERLINE + message, xPadding / 2 - (int)(fontRenderer.getStringWidth(message) * (1f / 1.3f) - 4), 2, 16777215);
+		fontRenderer.drawString(TextFormatting.UNDERLINE + message, (xPadding / 2 - (int)(fontRenderer.getStringWidth(message) * (1f / 1.3f) - 4) - 10), 2, 16777215);
 		GL11.glScalef(1 / 1.3f, 1 / 1.3f, 1 / 1.3f);
 		GlStateManager.popMatrix();
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -173,9 +176,28 @@ public class GUIBlacklist extends EditScreen{
 		int col = 0; //x
 		int row = 0; //y
 		
+		addCustomButton(new EditButton(id++, width / 2 - 24, height / 2 - 26));
+		addCustomButton(new AddButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y, Top));
+		id++;
+		addCustomButton(new DeleteButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y));
+		id++;
+		addCustomButton(new ArrowButton(id++, 0,0, EAST, Top));
+		addCustomButton(new ArrowButton(id++, 0,0, WEST, Top));
+		addCustomButton(new EditButton(id++, width / 2 - 24, height - 39));
+		addCustomButton(new AddButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y, Bottom));
+		id++;
+		addCustomButton(new DeleteButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y));
+		id++;
+		addCustomButton(new ArrowButton(id++, 0,0, EAST, Bottom));
+		addCustomButton(new ArrowButton(id++, 0,0, WEST, Bottom));
+		addCustomButton(new AddButton(id++, 3, 18, GUISegment.Sidebar));
+		addCustomButton(new DeleteButton(id, xPadding - 16 - 24, 18));
+		addCustomButton(new ArrowButton(id++, 0,0, NORTH, Sidebar));
+		addCustomButton(new ArrowButton(id++, 0,0, SOUTH, Sidebar));
+		
 		for(Blacklist b : Blacklist.getBlacklists().values()) {
 			if(b != null) {
-				addCustomButton(new BlacklistButton(id++, row, b.getName()));
+				addCustomButton(new BlacklistButton(id++, row, b));
 				row++;
 			}
 			else {
@@ -230,22 +252,6 @@ public class GUIBlacklist extends EditScreen{
 			}
 		}
 		
-		addCustomButton(new EditButton(id++, width / 2 - 24, height / 2 - 26));
-		addCustomButton(new AddButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y, Top));
-		id++;
-		addCustomButton(new DeleteButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y));
-		id++;
-		addCustomButton(new ArrowButton(id++, 0,0, EAST, Top));
-		addCustomButton(new ArrowButton(id++, 0,0, WEST, Top));
-		addCustomButton(new EditButton(id++, width / 2 - 24, height - 39));
-		addCustomButton(new AddButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y, Bottom));
-		id++;
-		addCustomButton(new DeleteButton(id, buttonList.get(id - 1).x + buttonList.get(id - 1).width, buttonList.get(id - 1).y));
-		id++;
-		addCustomButton(new ArrowButton(id++, 0,0, EAST, Bottom));
-		addCustomButton(new ArrowButton(id++, 0,0, WEST, Bottom));
-		addCustomButton(new ArrowButton(id++, 0,0, NORTH, Sidebar));
-		addCustomButton(new ArrowButton(id++, 0,0, SOUTH, Sidebar));
 	}
 	
 	private void clear(){
@@ -271,12 +277,22 @@ public class GUIBlacklist extends EditScreen{
 					GUIAddToBlacklist.passedData = ((ItemButton) button).getListItem();
 					mc.player.openGui(Main.getInstance(), GUI_BLACKLIST_ADD_WILD, mc.player.world, (int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ);
 				}
-				return;
 			}
-			if (button instanceof ImageButton){
+			else if (button instanceof ImageButton){
 				((ImageButton) button).onClick();
 			}
+			else if (button instanceof BlacklistButton) {
+				((BlacklistButton) button).onClick();
+			}
 		}
+	}
+	
+	@Override
+	public void confirmClicked(boolean result, int id) {
+		if(result) {
+			((BlacklistButton)this.buttonList.get(id + 1)).confirmDelete();
+		}
+		Minecraft.getMinecraft().displayGuiScreen(this);
 	}
 	
 	private int getVisibleCount(GUISegment s){
@@ -296,6 +312,15 @@ public class GUIBlacklist extends EditScreen{
 				}
 			}
 			return (int)Math.ceil((double)ret / 3d);
+		}
+		
+		else if(s == Sidebar){
+			for(GuiButton b : buttonList){
+				if (b instanceof BlacklistButton && ((BlacklistButton)b).getGUISegment() == Sidebar && b.visible){
+					ret++;
+				}
+			}
+			return ret;
 		}
 		throw new AssertionError();
 	}
@@ -317,6 +342,15 @@ public class GUIBlacklist extends EditScreen{
 				}
 			}
 			return (int)Math.ceil((double)ret / 3d);
+		}
+		
+		else if(s == Sidebar){
+			for(GuiButton b : buttonList){
+				if (b instanceof BlacklistButton && ((BlacklistButton)b).getGUISegment() == Sidebar){
+					ret++;
+				}
+			}
+			return ret;
 		}
 		throw new AssertionError();
 	}
@@ -380,6 +414,9 @@ public class GUIBlacklist extends EditScreen{
 			}
 			else if (seg == Bottom){
 				mc.player.openGui(Main.getInstance(), GUI_BLACKLIST_ADD_ORE, mc.player.world, (int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ);
+			}
+			else if(seg == Sidebar) {
+				mc.player.openGui(Main.getInstance(), GUI_BLACKLIST_ADD_BLACKLIST, mc.player.world, (int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ);
 			}
 		}
 
@@ -449,6 +486,18 @@ public class GUIBlacklist extends EditScreen{
 							throw new IllegalStateException();
 					}
 					break;
+				case Sidebar:
+					switch (direction) {
+						case NORTH:
+							sidePage--;
+							break;
+						case SOUTH:
+							sidePage++;
+							break;
+						default:
+							throw new IllegalStateException();
+					}
+					break;
 				default: throw new AssertionError();
 			}
 		}
@@ -460,8 +509,13 @@ public class GUIBlacklist extends EditScreen{
 		
 		public void updatePosition(){
 			if (seg == Sidebar){
-				this.x = 0;
-				this.y = 0;
+				this.x = xPadding - width - 48;
+				if(direction == NORTH) {
+					this.y = 18;
+				}
+				if(direction == SOUTH) {
+					this.y = GUIBlacklist.this.height - yPadding;
+				}
 			}
 			else{
 				if (this.direction == EAST){
@@ -481,21 +535,48 @@ public class GUIBlacklist extends EditScreen{
 	
 	private final class BlacklistButton extends EditScreen.BlacklistButton{
 		public final int row;
+		private final Blacklist blacklist;
 
-		public BlacklistButton(int id, int row, String displayString) {
-			super(id, 0, 16, displayString);
+		public BlacklistButton(int id, int row, Blacklist blacklist) {
+			super(id, 0, 16, blacklist.getName());
 			this.row = row;
+			this.blacklist = blacklist;
+			if(this.blacklist == Blacklist.getActiveBlacklist()) {
+				this.displayString = TextFormatting.YELLOW + "" + TextFormatting.BOLD + this.displayString;
+			}
 		}
 		
 		public void updatePosition() {
-			this.width = xPadding - 10;
+			this.width = xPadding - 10 - 16;
 			if(this.getGUISegment() == Sidebar) {
-				this.x = xPadding - width - 5;
-				this.y = 18 * (row + 1);
+				this.x = xPadding - width - 5 - 18;
+				this.y = (18 * (row + 1) + (-sidePage * 18)) + 18;
+				if(this.y + height> GUIBlacklist.this.height - yPadding || this.y + height < yPadding + 18) {
+					this.visible = false;
+				}
+				else {
+					this.visible = true;
+				}
 			}
 			else {
 				throw new AssertionError("Blacklist buttons cannot exist outside of the sidebar!");
 			}
+		}
+		
+		public void onClick() {
+			if(GUIBlacklist.this.mode == Delete) {
+				if(Blacklist.getBlacklists().size() > 1) {
+					Minecraft.getMinecraft().displayGuiScreen(new GuiYesNo(GUIBlacklist.this, "Delete the following blacklist:", blacklist.getName(), this.id));
+				}
+			}
+			else {
+				Blacklist.setActiveBlacklist(this.blacklist);
+				Minecraft.getMinecraft().player.openGui(Main.MODID, GUIHandler.GUI_BLACKLIST, Minecraft.getMinecraft().world, 0, 0, 0);
+			}
+		}
+		
+		private final void confirmDelete() {
+			Blacklist.removeBlacklist(this.blacklist);
 		}
 
 		@Override

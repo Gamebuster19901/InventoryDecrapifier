@@ -103,7 +103,7 @@ public class ClientProxy extends Proxy{
 		Blacklist.updateBlacklistsFromConfig();
 	}
 	
-	public final void syncToFile(){
+	public final static void syncToFile(){
 		Blacklist[] blacklists = (Blacklist[]) Blacklist.getBlacklists().values().toArray(new Blacklist[]{});
 		String[] blacklistsAsString = new String[blacklists.length];
 		
