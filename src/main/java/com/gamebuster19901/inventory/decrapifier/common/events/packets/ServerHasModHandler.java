@@ -1,5 +1,8 @@
 package com.gamebuster19901.inventory.decrapifier.common.events.packets;
 
+import com.gamebuster19901.inventory.decrapifier.Main;
+
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -9,8 +12,11 @@ public class ServerHasModHandler implements IMessageHandler<ServerHasModPacket, 
 	
 	@Override
 	public IMessage onMessage(ServerHasModPacket message, MessageContext ctx) {
-		serverHasMod = true;
-		return new ClientHasModPacket();
+		Minecraft.getMinecraft().addScheduledTask(() -> {
+			serverHasMod = true;
+			Main.Proxy.NETWORK.sendToServer(new ClientHasModPacket());
+		});
+		return null;
 	}
 	
 	public static boolean serverHasMod() {

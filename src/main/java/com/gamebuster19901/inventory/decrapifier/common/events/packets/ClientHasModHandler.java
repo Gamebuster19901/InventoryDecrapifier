@@ -8,7 +8,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class ClientHasModHandler implements IMessageHandler<ClientHasModPacket, IMessage>{
 	@Override
 	public IMessage onMessage(ClientHasModPacket message, MessageContext ctx) {
-		Main.Proxy.getServerDecrapifier().getClient(ctx.getServerHandler().player).setHasMod(true);
+		ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
+			Main.Proxy.getServerDecrapifier().getClient(ctx.getServerHandler().player).setHasMod(true);
+		});
 		return null;
 	}
 }

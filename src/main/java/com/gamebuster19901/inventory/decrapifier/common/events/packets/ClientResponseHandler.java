@@ -2,9 +2,8 @@ package com.gamebuster19901.inventory.decrapifier.common.events.packets;
 
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.Level;
-
 import com.gamebuster19901.inventory.decrapifier.Main;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.text.TextComponentString;
@@ -16,21 +15,19 @@ public class ClientResponseHandler implements IMessageHandler<ClientResponsePack
 
 	@Override
 	public IMessage onMessage(ClientResponsePacket message, MessageContext ctx) {
-		for(Entity e : new ArrayList<Entity>(ctx.getServerHandler().player.getServerWorld().loadedEntityList)){
-			if (message != null && e.getUniqueID().equals(message.getUUID())){
-				if (e instanceof EntityItem){
-					if(ctx.getServerHandler().player.getUniqueID().equals(message.getPlayer())){
+		ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
+			for(Entity e : new ArrayList<Entity>(ctx.getServerHandler().player.getServerWorld().loadedEntityList)){
+				if (message != null && e.getUniqueID().equals(message.getUUID())){
+					if (e instanceof EntityItem){
 						Main.Proxy.getServerDecrapifier().addPickup(ctx.getServerHandler().player,(EntityItem) e, message.canPickup());
 					}
-					else {
-						Main.LOGGER.log(Level.ERROR, "MessageContext in invalid state, attempted to process packet for " + ctx.getServerHandler().player.getName() + " that was meant for " + ctx.getServerHandler().player.world.getPlayerEntityByUUID(message.getPlayer()).getName() + "... Ignoring the packet!");
+					else{
+						ctx.getServerHandler().disconnect(new TextComponentString("[InventoryDecrapifier] Malformed packets:\n" + e + "\nis not an EntityItem"));
 					}
 				}
-				else{
-					ctx.getServerHandler().disconnect(new TextComponentString("[InventoryDecrapifier] Malformed packets:\n" + e + "\nis not an EntityItem"));
-				}
 			}
-		}
+		});
+		
 		return null;
 	}
 }

@@ -28,9 +28,7 @@ public class ServerDecrapifier extends CommonDecrapifier{
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	protected void ServerTickEvent(TickEvent.ServerTickEvent e){
 		if(e.phase == TickEvent.Phase.END){
-			synchronized(pickups) {
-				pickups.clear();
-			}
+			pickups.clear();
 		}
 	}
 	
