@@ -3,7 +3,7 @@
   "modid": "invdecrap",
   "name": "\u00a7c\u00a7lInventory Decrapifier\u00a7r",
   "description": "Making sure crap stays out of your inventory",
-  "version": "1.0.0.0-1.12.2",
+  "version": "1.0.2.1-1.12.2",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
