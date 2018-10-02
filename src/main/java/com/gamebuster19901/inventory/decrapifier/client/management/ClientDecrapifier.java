@@ -7,6 +7,7 @@ import com.gamebuster19901.inventory.decrapifier.client.gui.GUIHandler;
 import com.gamebuster19901.inventory.decrapifier.common.CommonDecrapifier;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ClientResponsePacket;
 import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerAskPickupItemPacket;
+import com.gamebuster19901.inventory.decrapifier.common.events.packets.ServerHasModHandler;
 import com.gamebuster19901.inventory.decrapifier.proxy.ClientProxy;
 
 import java.lang.reflect.Field;
@@ -72,9 +73,11 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	/*
 	 * Only make the item glow under the following conditions
 	 * 
-	 * 1. Highlight Items is ON
+	 * 1.Server has mod installed
 	 * AND
-	 * 2. Target is new
+	 * 2. Highlight Items is ON
+	 * AND
+	 * 3. Target is new
 	 * AND
 	 * 		pickupItemsByDefault is FALSE
 	 * 		OR
@@ -82,7 +85,7 @@ public final class ClientDecrapifier extends CommonDecrapifier{
 	 * 
 	 */
 	private final void setGlowingItem(EntityItem item){
-		if (item != null){
+		if (ServerHasModHandler.serverHasMod() && item != null){
 			if (!pickupItemsByDefault() || (blacklistEnabled() && Blacklist.getActiveBlacklist().contains(item.getItem()))){
 				setGlowing(target, false);
 				target = item;
